@@ -8,9 +8,9 @@
         <div class="container">
             <div class="row align-items-center g-4 g-lg-5">
                 <div class="col-12 col-lg-7">
-                    <div class="about-breadcrumb">VETAL SAND SOLUTIONS / CART</div>
+                    <div class="about-breadcrumb">VETAL SAND SOLUTIONS</div>
                     <h1>Shopping Cart</h1>
-                    <p class="lead">Review your selected silica sand products.</p>
+                    <p class="lead">Review your selected silica sand products before proceeding.</p>
                 </div>
 
                 <div class="col-12 col-lg-5">
@@ -26,7 +26,7 @@
 
     <section class="cart-page">
         <div class="container cart-page-container">
-            <div class="cart-intro">
+            <section class="cart-intro">
                 <div class="cart-intro-content">
                     <span class="cart-eyebrow">Shopping Cart</span>
                 </div>
@@ -35,7 +35,7 @@
                         {{ cart_count }} item{{ cart_count|pluralize }}
                     </span>
                 {% endif %}
-            </div>
+            </section>
 
             {% if cart_items %}
                 <section class="cart-layout">
@@ -103,10 +103,14 @@
                                 <span class="summary-label">Selected Products</span>
                                 <span class="summary-value">{{ cart_items|length }}</span>
                             </div>
+                            <div class="cart-summary-row">
+                                <span class="summary-label">Pricing</span>
+                                <span class="summary-value summary-pricing">Pricing available on request</span>
+                            </div>
                         </div>
 
                         <div class="cart-summary-message">
-                            <p>Pricing is provided based on product grade, quantity and requirement.</p>
+                            <p>Pricing available on request.</p>
                         </div>
 
                         <div class="cart-summary-actions">

@@ -1330,6 +1330,12 @@ select {
     color: var(--text-soft);
 }
 
+.summary-pricing {
+    font-size: 0.84rem;
+    color: var(--primary);
+    font-weight: 800;
+}
+
 .cart-count-badge-soft {
     display: inline-flex;
     align-items: center;
