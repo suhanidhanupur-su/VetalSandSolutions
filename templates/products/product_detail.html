@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="product-detail-page">
+    <div class="container py-5">
+        <nav aria-label="breadcrumb" class="product-detail-breadcrumb-wrap">
+            <ol class="breadcrumb product-detail-breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="product-detail-card">
+            <div class="row g-4 g-lg-5 align-items-start">
+                <div class="col-12 col-lg-6">
+                    <div class="product-gallery">
+                        {% if product_images %}
+                            {% with main_image=product.primary_image|default:product_images.0 %}
+                                <div class="product-gallery-main">
+                                    {% if main_image and main_image.image %}
+                                        <img src="{{ main_image.image.url }}" alt="{{ main_image.alt_text|default:product.name }}" class="product-gallery-image">
+                                    {% else %}
+                                        <div class="product-placeholder product-gallery-placeholder" aria-label="No product image available">
+                                            <span>Product Image</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endwith %}
+
+                            <div class="product-gallery-thumbs">
+                                {% for image in product_images %}
+                                    {% if image and image.image %}
+                                        <div class="product-thumb">
+                                            <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="product-thumb-image">
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="product-placeholder product-gallery-placeholder large" aria-label="No product image available">
+                                <span>Product Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <div class="product-detail-content">
+                        <div class="product-detail-meta">
+                            <span class="product-detail-category">{{ product.category.name }}</span>
+                            {% if product.grade %}
+                                <span class="product-detail-grade">{{ product.grade }}</span>
+                            {% endif %}
+                        </div>
+
+                        <h1>{{ product.name }}</h1>
+
+                        {% if product.short_description %}
+                            <p class="product-detail-short">{{ product.short_description }}</p>
+                        {% endif %}
+
+                        <div class="product-detail-actions">
+                            <a href="#" class="btn btn-primary">Add to Cart</a>
+                            <a href="#" class="btn btn-secondary">Request a Quote</a>
+                        </div>
+
+                        {% if product.description %}
+                            <div class="product-detail-section">
+                                <h3>Description</h3>
+                                <p>{{ product.description }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if product.specifications %}
+                            <div class="product-detail-section">
+                                <h3>Specifications</h3>
+                                <p>{{ product.specifications }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if product.applications %}
+                            <div class="product-detail-section">
+                                <h3>Applications</h3>
+                                <p>{{ product.applications }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if product.industries %}
+                            <div class="product-detail-section">
+                                <h3>Industries</h3>
+                                <p>{{ product.industries }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if related_products %}
+            <div class="related-products-section">
+                <div class="section-heading">
+                    <p class="section-kicker">Related Products</p>
+                    <h2>More solutions in this category</h2>
+                </div>
+
+                <div class="row g-4 g-lg-4">
+                    {% for related_product in related_products %}
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <article class="related-product-card">
+                                <div class="related-product-image-wrap">
+                                    {% if related_product.primary_image and related_product.primary_image.image %}
+                                        <img src="{{ related_product.primary_image.image.url }}" alt="{{ related_product.primary_image.alt_text|default:related_product.name }}" class="related-product-image">
+                                    {% else %}
+                                        <div class="product-placeholder related-product-placeholder" aria-label="No product image available">
+                                            <span>Product Image</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="related-product-body">
+                                    <div class="related-product-meta">
+                                        <span class="related-product-category">{{ related_product.category.name }}</span>
+                                        {% if related_product.grade %}
+                                            <span class="related-product-grade">{{ related_product.grade }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <h3>{{ related_product.name }}</h3>
+                                    <a href="{% url 'product_detail' related_product.slug %}" class="btn btn-primary product-btn">View Details</a>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

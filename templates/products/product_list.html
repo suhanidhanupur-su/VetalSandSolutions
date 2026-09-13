@@ -55,7 +55,7 @@
                                     <h3>{{ product.name }}</h3>
                                     <p>{{ product.short_description|default:product.description|striptags|truncatechars:140 }}</p>
 
-                                    <a href="{% url 'product_list' %}" class="btn btn-primary product-btn">View Details</a>
+                                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary product-btn">View Details</a>
                                 </div>
                             </article>
                         </div>

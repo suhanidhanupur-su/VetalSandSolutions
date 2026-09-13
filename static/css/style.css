@@ -935,11 +935,295 @@ select {
     margin-bottom: 0;
 }
 
+.product-detail-page {
+    background: linear-gradient(180deg, rgba(247, 241, 232, 0.98) 0%, rgba(252, 250, 246, 1) 100%);
+    min-height: 70vh;
+}
+
+.product-detail-breadcrumb-wrap {
+    margin-bottom: 1.5rem;
+}
+
+.product-detail-breadcrumb {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.product-detail-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    color: rgba(33, 27, 24, 0.5);
+    padding-right: 0.4rem;
+}
+
+.product-detail-breadcrumb a {
+    color: var(--primary);
+}
+
+.product-detail-card {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(232, 216, 197, 0.9);
+    border-radius: 1.35rem;
+    box-shadow: var(--shadow-card);
+    padding: 1.5rem;
+}
+
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.product-gallery-main {
+    position: relative;
+    height: 28rem;
+    overflow: hidden;
+    border-radius: 1.2rem;
+    background: linear-gradient(135deg, rgba(232, 216, 197, 0.8), rgba(247, 241, 232, 0.92));
+    border: 1px solid rgba(198, 154, 90, 0.22);
+}
+
+.product-gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.product-gallery-placeholder,
+.related-product-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    background: linear-gradient(135deg, rgba(155, 61, 32, 0.08), rgba(198, 154, 90, 0.18));
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+}
+
+.product-gallery-placeholder.large {
+    min-height: 24rem;
+}
+
+.product-gallery-thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.75rem;
+}
+
+.product-thumb {
+    height: 6rem;
+    overflow: hidden;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(232, 216, 197, 0.9);
+    background: rgba(247, 241, 232, 0.8);
+}
+
+.product-thumb-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.product-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.product-detail-category,
+.product-detail-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.product-detail-category {
+    background: rgba(155, 61, 32, 0.08);
+    color: var(--primary);
+}
+
+.product-detail-grade {
+    background: rgba(198, 154, 90, 0.12);
+    color: var(--dark);
+}
+
+.product-detail-content h1 {
+    font-size: clamp(2.4rem, 4vw, 4rem);
+    margin-bottom: 0;
+}
+
+.product-detail-short {
+    font-size: 1.06rem;
+    color: rgba(33, 27, 24, 0.8);
+    margin: 0;
+}
+
+.product-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.25rem;
+}
+
+.product-detail-section {
+    padding-top: 0.5rem;
+}
+
+.product-detail-section h3 {
+    font-size: 1.08rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.product-detail-section p {
+    margin-bottom: 0;
+    color: rgba(33, 27, 24, 0.76);
+}
+
+.related-products-section {
+    margin-top: 4rem;
+}
+
+.section-kicker {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.related-product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(232, 216, 197, 0.9);
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.related-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
+    border-color: rgba(198, 154, 90, 0.6);
+}
+
+.related-product-image-wrap {
+    position: relative;
+    height: 13rem;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(232, 216, 197, 0.8), rgba(247, 241, 232, 0.9));
+}
+
+.related-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.related-product-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.2rem 1rem 1.2rem;
+}
+
+.related-product-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.related-product-category,
+.related-product-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.related-product-category {
+    background: rgba(155, 61, 32, 0.08);
+    color: var(--primary);
+}
+
+.related-product-grade {
+    background: rgba(198, 154, 90, 0.12);
+    color: var(--dark);
+}
+
+.related-product-body h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
 .site-footer {
     background: var(--dark);
     color: var(--cream);
     margin-top: 0;
     border-top: 1px solid rgba(198, 154, 90, 0.28);
+}
+
+@media (max-width: 991.98px) {
+    .product-gallery-main {
+        height: 22rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .product-detail-card {
+        padding: 1rem;
+    }
+
+    .product-gallery-main {
+        height: 18rem;
+    }
+
+    .product-detail-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .product-detail-actions .btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 991.98px) {
