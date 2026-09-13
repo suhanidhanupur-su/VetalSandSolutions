@@ -3,118 +3,138 @@
 {% block title %}Cart | Vetal Sand Solutions{% endblock %}
 
 {% block content %}
-<section class="cart-page">
-    <div class="container cart-page-container">
-        <section class="cart-intro">
-            <div class="cart-intro-content">
-                <span class="cart-eyebrow">SHOPPING CART</span>
-                <h1>Your Cart</h1>
-                <p class="cart-intro-text">Review your selected silica sand products before proceeding.</p>
+<section class="about-page">
+    <section class="about-hero cart-hero">
+        <div class="container">
+            <div class="row align-items-center g-4 g-lg-5">
+                <div class="col-12 col-lg-7">
+                    <div class="about-breadcrumb">VETAL SAND SOLUTIONS / CART</div>
+                    <h1>Shopping Cart</h1>
+                    <p class="lead">Review your selected silica sand products.</p>
+                </div>
+
+                <div class="col-12 col-lg-5">
+                    <div class="about-hero-visual" aria-label="Cart and industrial sand visual">
+                        <div class="about-visual-surface"></div>
+                        <div class="about-visual-stack"></div>
+                        <div class="about-visual-badge">Cart Selection</div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
+
+    <section class="cart-page">
+        <div class="container cart-page-container">
+            <div class="cart-intro">
+                <div class="cart-intro-content">
+                    <span class="cart-eyebrow">Shopping Cart</span>
+                </div>
+                {% if cart_items %}
+                    <span class="cart-count-badge-soft">
+                        {{ cart_count }} item{{ cart_count|pluralize }}
+                    </span>
+                {% endif %}
+            </div>
+
             {% if cart_items %}
-                <span class="cart-count-badge-soft">
-                    {{ cart_count }} item{{ cart_count|pluralize }}
-                </span>
-            {% endif %}
-        </section>
-
-        {% if cart_items %}
-            <section class="cart-layout">
-                <div class="cart-items">
-                    {% for item in cart_items %}
-                        {% with product=item.product %}
-                            <article class="cart-item-card">
-                                <div class="cart-item-image-wrap">
-                                    {% if product.primary_image and product.primary_image.image %}
-                                        <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="cart-item-image">
-                                    {% else %}
-                                        <div class="cart-placeholder" aria-label="No product image available">
-                                            <span>Product Image</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="cart-item-info">
-                                    <div class="cart-item-details">
-                                        <div class="cart-item-kicker">
-                                            <span class="cart-category-label">{{ product.category.name }}</span>
-                                            {% if product.grade %}
-                                                <span class="cart-grade-label">{{ product.grade }}</span>
-                                            {% endif %}
-                                        </div>
-                                        <h3>{{ product.name }}</h3>
-                                        <p class="cart-item-short">{{ product.short_description|default:product.description|striptags|truncatechars:160 }}</p>
+                <section class="cart-layout">
+                    <div class="cart-items">
+                        {% for item in cart_items %}
+                            {% with product=item.product %}
+                                <article class="cart-item-card">
+                                    <div class="cart-item-image-wrap">
+                                        {% if product.primary_image and product.primary_image.image %}
+                                            <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="cart-item-image">
+                                        {% else %}
+                                            <div class="cart-placeholder" aria-label="No product image available">
+                                                <span>Product Image</span>
+                                            </div>
+                                        {% endif %}
                                     </div>
 
-                                    <div class="cart-item-actions">
-                                        <div class="cart-quantity-group">
-                                            <label class="quantity-label" for="quantity-{{ product.id }}">Quantity</label>
-                                            <form method="post" action="{% url 'update_cart' product.id %}" class="cart-update-form">
+                                    <div class="cart-item-info">
+                                        <div class="cart-item-details">
+                                            <div class="cart-item-kicker">
+                                                <span class="cart-category-label">{{ product.category.name }}</span>
+                                                {% if product.grade %}
+                                                    <span class="cart-grade-label">{{ product.grade }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <h3>{{ product.name }}</h3>
+                                            <p class="cart-item-short">{{ product.short_description|default:product.description|striptags|truncatechars:160 }}</p>
+                                        </div>
+
+                                        <div class="cart-item-actions">
+                                            <div class="cart-quantity-group">
+                                                <label class="quantity-label" for="quantity-{{ product.id }}">Quantity</label>
+                                                <form method="post" action="{% url 'update_cart' product.id %}" class="cart-update-form">
+                                                    {% csrf_token %}
+                                                    <div class="quantity-wrap">
+                                                        <input type="number" id="quantity-{{ product.id }}" name="quantity" value="{{ item.quantity }}" min="0" class="quantity-input">
+                                                        <button type="submit" class="btn btn-secondary btn-sm cart-update-btn">Update</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <form method="post" action="{% url 'remove_from_cart' product.id %}" class="cart-remove-form">
                                                 {% csrf_token %}
-                                                <div class="quantity-wrap">
-                                                    <input type="number" id="quantity-{{ product.id }}" name="quantity" value="{{ item.quantity }}" min="0" class="quantity-input">
-                                                    <button type="submit" class="btn btn-secondary btn-sm cart-update-btn">Update</button>
-                                                </div>
+                                                <button type="submit" class="cart-remove-link">Remove</button>
                                             </form>
                                         </div>
-
-                                        <form method="post" action="{% url 'remove_from_cart' product.id %}" class="cart-remove-form">
-                                            {% csrf_token %}
-                                            <button type="submit" class="cart-remove-link">Remove</button>
-                                        </form>
                                     </div>
-                                </div>
-                            </article>
-                        {% endwith %}
-                    {% endfor %}
-                </div>
-
-                <aside class="cart-summary-card">
-                    <div class="cart-summary-header">
-                        <span class="cart-summary-kicker">Cart Summary</span>
-                        <h2>Cart Summary</h2>
+                                </article>
+                            {% endwith %}
+                        {% endfor %}
                     </div>
 
-                    <div class="cart-summary-list">
-                        <div class="cart-summary-row">
-                            <span class="summary-label">Total Items</span>
-                            <span class="summary-value">{{ cart_count }}</span>
+                    <aside class="cart-summary-card">
+                        <div class="cart-summary-header">
+                            <span class="cart-summary-kicker">Cart Summary</span>
+                            <h2>Cart Summary</h2>
                         </div>
-                        <div class="cart-summary-row">
-                            <span class="summary-label">Selected Products</span>
-                            <span class="summary-value">{{ cart_items|length }}</span>
+
+                        <div class="cart-summary-list">
+                            <div class="cart-summary-row">
+                                <span class="summary-label">Total Items</span>
+                                <span class="summary-value">{{ cart_count }}</span>
+                            </div>
+                            <div class="cart-summary-row">
+                                <span class="summary-label">Selected Products</span>
+                                <span class="summary-value">{{ cart_items|length }}</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="cart-summary-message">
-                        <p>Pricing is provided based on product grade, quantity and requirement.</p>
-                    </div>
+                        <div class="cart-summary-message">
+                            <p>Pricing is provided based on product grade, quantity and requirement.</p>
+                        </div>
 
-                    <div class="cart-summary-actions">
-                        <a href="#" class="btn btn-primary cart-quote-btn">Request a Quote</a>
-                    </div>
+                        <div class="cart-summary-actions">
+                            <a href="#" class="btn btn-primary cart-quote-btn">Request a Quote</a>
+                        </div>
 
-                    <div class="cart-info-box">
-                        <h3>Need bulk quantities?</h3>
-                        <p>Tell us your required grade, quantity and application and our team can help with a suitable quotation.</p>
-                        <a href="#" class="btn btn-secondary cart-info-btn">Request a Quote</a>
+                        <div class="cart-info-box">
+                            <h3>Need bulk quantities?</h3>
+                            <p>Tell us your required grade, quantity and application and our team can help with a suitable quotation.</p>
+                            <a href="#" class="btn btn-secondary cart-info-btn">Request a Quote</a>
+                        </div>
+                    </aside>
+                </section>
+            {% else %}
+                <section class="cart-empty-wrap">
+                    <div class="cart-empty-state">
+                        <div class="cart-empty-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.17 14h9.92c.75 0 1.41-.41 1.75-1.03L22 6H6.21l-.94-2H2v2h2l3.6 7.59-1.35 2.45C5.52 16.37 6.48 18 8 18h12v-2H8l1.1-2z"/>
+                            </svg>
+                        </div>
+                        <h2>Your cart is empty</h2>
+                        <p>Explore our silica sand grades and add products to your cart.</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-primary cart-explore-btn">Explore Products</a>
                     </div>
-                </aside>
-            </section>
-        {% else %}
-            <section class="cart-empty-wrap">
-                <div class="cart-empty-state">
-                    <div class="cart-empty-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.17 14h9.92c.75 0 1.41-.41 1.75-1.03L22 6H6.21l-.94-2H2v2h2l3.6 7.59-1.35 2.45C5.52 16.37 6.48 18 8 18h12v-2H8l1.1-2z"/>
-                        </svg>
-                    </div>
-                    <h2>Your cart is empty</h2>
-                    <p>Explore our silica sand grades and add products to your cart.</p>
-                    <a href="{% url 'product_list' %}" class="btn btn-primary cart-explore-btn">Explore Products</a>
-                </div>
-            </section>
-        {% endif %}
-    </div>
+                </section>
+            {% endif %}
+        </div>
+    </section>
 </section>
 {% endblock %}

@@ -1313,6 +1313,23 @@ select {
     font-size: 1.05rem;
 }
 
+.cart-hero.about-hero {
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+}
+
+.cart-hero .about-breadcrumb {
+    color: var(--primary);
+}
+
+.cart-hero h1 {
+    color: var(--dark);
+}
+
+.cart-hero .lead {
+    color: var(--text-soft);
+}
+
 .cart-count-badge-soft {
     display: inline-flex;
     align-items: center;
