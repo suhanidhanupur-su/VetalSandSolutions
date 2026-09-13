@@ -11,3 +11,7 @@ def about(request):
 
 def industries(request):
     return render(request, 'core/industries.html')
+
+
+def applications(request):
+    return render(request, 'core/applications.html')
