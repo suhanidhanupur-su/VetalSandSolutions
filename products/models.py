@@ -1,3 +1,4 @@
+from cloudinary.models import CloudinaryField
 from django.db import models
 
 
@@ -36,3 +37,17 @@ class Product(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = CloudinaryField('image')
+    alt_text = models.CharField(max_length=200, blank=True)
+    is_primary = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product.name} Image"
+
+    class Meta:
+        ordering = ['-is_primary', '-created_at']
