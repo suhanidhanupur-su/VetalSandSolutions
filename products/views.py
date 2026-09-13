@@ -9,4 +9,5 @@ def product_list(request):
     for product in products:
         product.primary_image = product.images.filter(is_primary=True).first() or product.images.first()
 
-    return render(request, 'products/product_list.html', {'products': products})
+    context = {'products': products}
+    return render(request, 'products/product_list.html', context)

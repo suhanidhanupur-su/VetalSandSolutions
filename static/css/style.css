@@ -517,7 +517,25 @@ select {
     z-index: 1;
 }
 
+.products-page {
+    background: linear-gradient(180deg, rgba(247, 241, 232, 0.98) 0%, rgba(252, 250, 246, 1) 100%);
+}
+
+.products-hero {
+    position: relative;
+    padding: 5rem 0 3rem;
+    background: linear-gradient(180deg, rgba(247, 241, 232, 0.92) 0%, rgba(252, 250, 246, 1) 100%);
+    border-bottom: 1px solid rgba(198, 154, 90, 0.18);
+}
+
+.products-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.products-breadcrumb,
 .about-breadcrumb {
+
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
