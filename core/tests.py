@@ -17,3 +17,11 @@ class CorePageViewsTests(TestCase):
         self.assertContains(response, 'Vetal Sand Solutions')
         self.assertContains(response, 'About')
         self.assertContains(response, 'Premium quality silica sand solutions for demanding industrial applications.')
+
+    def test_industries_page_loads(self):
+        response = self.client.get(reverse('industries'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Industries We Serve')
+        self.assertContains(response, 'Foundries')
+        self.assertContains(response, 'Castings')
+        self.assertContains(response, 'Glass Manufacturing')
