@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}My Account | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="inner-page-hero auth-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="section-kicker">Vetal Sand Solutions</span>
+                <h1 class="page-title">My Account</h1>
+                <p class="page-subtitle">Manage your industrial product preferences.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="account-dashboard">
+                    <div class="account-summary">
+                        <div>
+                            <span class="section-kicker">Logged-in username</span>
+                            <h3>{{ user.username }}</h3>
+                        </div>
+                        <div>
+                            <span class="section-kicker">Email</span>
+                            <h3>{{ user.email|default:'No email added' }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="account-links">
+                        <a class="account-link" href="#">My Orders</a>
+                        <a class="account-link" href="#">Wishlist</a>
+                        <a class="account-link" href="#">Profile</a>
+                    </div>
+
+                    <div class="account-actions">
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-quote">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

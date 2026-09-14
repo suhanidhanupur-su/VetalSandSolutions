@@ -30,6 +30,16 @@
                         <span class="cart-count-badge">{{ cart_count }}</span>
                     {% endif %}
                 </a>
+                {% if user.is_authenticated %}
+                    <a class="btn btn-outline-light btn-sm" href="{% url 'account' %}">Account</a>
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-quote btn-sm">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Login</a>
+                    <a class="btn btn-quote btn-sm" href="{% url 'register' %}">Register</a>
+                {% endif %}
                 <a class="btn btn-quote" href="{% url 'quote' %}">Request a Quote</a>
             </div>
         </div>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Login | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="inner-page-hero auth-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="section-kicker">Vetal Sand Solutions</span>
+                <h1 class="page-title">Login to your account</h1>
+                <p class="page-subtitle">Manage your industrial sourcing requests and account details.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="auth-card">
+                    <div class="auth-card-header">
+                        <h3>Welcome back</h3>
+                        <span class="auth-card-subtitle">Need an account? <a href="{% url 'register' %}">Create one</a></span>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label" for="id_username">Username</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="id_password">Password</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors }}</div>{% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
