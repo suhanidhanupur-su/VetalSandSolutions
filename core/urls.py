@@ -9,4 +9,6 @@ urlpatterns = [
     path('applications/', views.applications, name='applications'),
     path('portfolio/', views.portfolio, name='portfolio'),
     path('gallery/', views.gallery, name='gallery'),
+    path('contact/', views.contact, name='contact'),
+    path('quote/', views.request_quote, name='quote'),
 ]

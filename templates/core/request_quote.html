@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Request a Quote | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="about-page">
+    <section class="about-hero">
+        <div class="container">
+            <div class="row align-items-center g-4 g-lg-5">
+                <div class="col-12 col-lg-7">
+                    <div class="about-breadcrumb">VETAL SAND SOLUTIONS</div>
+                    <h1>Request a Quote</h1>
+                    <p class="lead">
+                        Tell us what silica sand solution you need.
+                    </p>
+                </div>
+
+                <div class="col-12 col-lg-5">
+                    <div class="about-hero-visual" aria-label="Quote request industrial sand visual">
+                        <div class="about-visual-surface"></div>
+                        <div class="about-visual-stack"></div>
+                        <div class="about-visual-badge">Material Inquiry</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="container">
+            <div class="row g-4 g-lg-5 align-items-start">
+                <div class="col-12 col-lg-4">
+                    <aside class="contact-panel">
+                        <span class="mini-label">Quotation Support</span>
+                        <h3>Share your requirement</h3>
+                        <p>
+                            Tell us about your silica sand use case, grade preference, quantity requirement, and location for product support.
+                        </p>
+                        <ul class="contact-list">
+                            <li>Product availability discussion</li>
+                            <li>Grade and quantity information</li>
+                            <li>Application and supply context</li>
+                        </ul>
+                    </aside>
+                </div>
+
+                <div class="col-12 col-lg-8">
+                    <div class="contact-form-wrap">
+                        <div class="section-heading compact-heading">
+                            <span class="eyebrow">Request a Quote</span>
+                            <h2>Request Form</h2>
+                        </div>
+
+                        <form method="post" class="contact-form">
+                            {% csrf_token %}
+
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.non_field_errors }}
+                                </div>
+                            {% endif %}
+
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-success">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="id_name" class="form-label">Name *</label>
+                                    {{ form.name }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_company" class="form-label">Company</label>
+                                    {{ form.company }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_email" class="form-label">Email *</label>
+                                    {{ form.email }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_phone" class="form-label">Phone</label>
+                                    {{ form.phone }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_product" class="form-label">Product *</label>
+                                    {{ form.product }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_grade" class="form-label">Grade *</label>
+                                    {{ form.grade }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_quantity" class="form-label">Quantity *</label>
+                                    {{ form.quantity }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_application" class="form-label">Application *</label>
+                                    {{ form.application }}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="id_location" class="form-label">Location *</label>
+                                    {{ form.location }}
+                                </div>
+                                <div class="col-12">
+                                    <label for="id_message" class="form-label">Message</label>
+                                    {{ form.message }}
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary hero-btn">Submit Quote Request</button>
+                                <a href="{% url 'contact' %}" class="btn btn-secondary hero-btn">Contact Us</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}

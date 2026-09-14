@@ -18,7 +18,7 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'applications' %}">Applications</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'portfolio' %}">Company</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
             </ul>
 
             <div class="navbar-actions d-flex align-items-center gap-3">
@@ -30,7 +30,7 @@
                         <span class="cart-count-badge">{{ cart_count }}</span>
                     {% endif %}
                 </a>
-                <a class="btn btn-quote" href="#">Request a Quote</a>
+                <a class="btn btn-quote" href="{% url 'quote' %}">Request a Quote</a>
             </div>
         </div>
     </div>

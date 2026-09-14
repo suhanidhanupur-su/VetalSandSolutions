@@ -64,7 +64,7 @@
 
                         <div class="product-detail-actions">
                             <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
-                            <a href="#" class="btn btn-secondary">Request a Quote</a>
+                            <a href="{% url 'quote' %}" class="btn btn-secondary">Request a Quote</a>
                         </div>
 
                         {% if product.description %}
