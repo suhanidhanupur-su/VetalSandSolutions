@@ -19,3 +19,7 @@ def applications(request):
 
 def portfolio(request):
     return render(request, 'core/portfolio.html')
+
+
+def gallery(request):
+    return render(request, 'core/gallery.html')

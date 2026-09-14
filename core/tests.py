@@ -41,3 +41,16 @@ class CorePageViewsTests(TestCase):
         self.assertContains(response, '45/50')
         self.assertContains(response, '50/60')
         self.assertContains(response, '60/70')
+
+    def test_gallery_page_loads(self):
+        response = self.client.get(reverse('gallery'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Gallery')
+        self.assertContains(response, 'A visual look at our products, materials and industrial solutions.')
+        self.assertContains(response, 'Silica Sand')
+        self.assertContains(response, 'Products &amp; Grades')
+        self.assertContains(response, 'Industrial Applications')
+        self.assertContains(response, 'Company')
+        self.assertContains(response, 'Materials &amp; Supply')
+        self.assertContains(response, 'Image coming soon')
+        self.assertContains(response, 'Request a Quote')
