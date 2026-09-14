@@ -285,6 +285,29 @@ select {
     min-width: 3.4rem;
     padding-left: 0.74rem;
     padding-right: 0.74rem;
+    background: var(--cream);
+    color: var(--dark);
+    border: 1px solid rgba(155, 61, 32, 0.3);
+}
+
+.navbar-actions .btn-outline-light:hover,
+.navbar-actions .btn-outline-light:focus-visible {
+    background: var(--sand);
+    color: var(--dark);
+    border-color: var(--primary);
+}
+
+.navbar-actions a[href='/account/login/'] {
+    color: var(--dark);
+    background: var(--cream);
+    border: 1px solid rgba(155, 61, 32, 0.24);
+}
+
+.navbar-actions a[href='/account/login/']:hover,
+.navbar-actions a[href='/account/login/']:focus-visible {
+    background: var(--sand);
+    color: var(--dark);
+    border-color: var(--primary);
 }
 
 .navbar-actions .btn-quote {
