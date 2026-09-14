@@ -15,3 +15,7 @@ def industries(request):
 
 def applications(request):
     return render(request, 'core/applications.html')
+
+
+def portfolio(request):
+    return render(request, 'core/portfolio.html')

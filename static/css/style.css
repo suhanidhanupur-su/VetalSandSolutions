@@ -918,6 +918,32 @@ select {
     margin-bottom: 0;
 }
 
+.product-grade-card {
+    min-height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.66);
+    border: 1px solid rgba(232, 216, 197, 0.95);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.product-grade-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+    border-color: rgba(198, 154, 90, 0.6);
+}
+
+.grade-token {
+    color: var(--primary);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
 .product-btn {
     width: fit-content;
     margin-top: auto;
