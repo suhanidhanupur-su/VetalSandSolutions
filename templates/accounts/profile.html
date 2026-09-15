@@ -3,53 +3,112 @@
 {% block title %}My Profile | Vetal Sand Solutions{% endblock %}
 
 {% block content %}
-<section class="inner-page-hero auth-hero">
+<section class="profile-section">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <span class="section-kicker">Vetal Sand Solutions</span>
-                <h1 class="page-title">My Profile</h1>
-                <p class="page-subtitle">Keep your contact details up to date for smoother sourcing support.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="auth-section profile-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-lg-7">
-                <div class="auth-card profile-card">
-                    <div class="auth-card-header">
-                        <h3>Profile details</h3>
-                        <span class="auth-card-subtitle">Username: {{ request.user.username }} · Email: {{ request.user.email|default:'No email added' }}</span>
-                    </div>
-
-                    <form method="post" enctype="multipart/form-data" novalidate>
-                        {% csrf_token %}
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-                        {% endif %}
-
-                        {% for field in form %}
-                            <div class="profile-form-field">
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
-                            </div>
-                        {% endfor %}
-
-                        {% if profile.profile_photo %}
-                            <div class="profile-photo-preview">
-                                <span class="profile-photo-label">Current profile photo</span>
-                                <img src="{{ profile.profile_photo.url }}" alt="Current profile photo">
-                            </div>
-                        {% endif %}
-
-                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
-                    </form>
+        <div class="profile-single-card">
+            <div class="profile-single-header">
+                <div class="profile-header-photo">
+                    {% if profile.profile_photo %}
+                        <img src="{{ profile.profile_photo.url }}" alt="{{ request.user.username }} profile photo" onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+                        <span class="profile-photo-placeholder" hidden>No photo</span>
+                    {% else %}
+                        <span class="profile-photo-placeholder">No photo</span>
+                    {% endif %}
+                </div>
+                <div class="profile-hero-copy">
+                    <span class="profile-eyebrow">My Profile</span>
+                    <h1>Profile Details</h1>
+                    <p class="profile-identity">@{{ request.user.username }}</p>
+                    <p class="profile-email">{{ request.user.email|default:'No email added' }}</p>
+                    <p class="profile-intro-copy">Manage your profile information.</p>
                 </div>
             </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="profile-message" role="status">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="profile-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="profile-divider"></div>
+                <section class="profile-details-section">
+                    <div class="profile-section-heading">
+                        <span class="profile-eyebrow">Personal information</span>
+                        <h2>Contact details</h2>
+                        <p>Keep your contact information current for smoother sourcing support.</p>
+                    </div>
+                    <div class="profile-fields-grid">
+                        <div class="profile-form-field">
+                            <label class="form-label" for="{{ form.full_name.id_for_label }}">Full name</label>
+                            {{ form.full_name }}
+                            {% if form.full_name.errors %}<div class="profile-field-error">{{ form.full_name.errors }}</div>{% endif %}
+                        </div>
+                        <div class="profile-form-field">
+                            <label class="form-label" for="{{ form.phone_number.id_for_label }}">Phone number</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}<div class="profile-field-error">{{ form.phone_number.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-photo-section">
+                    <div class="profile-section-heading">
+                        <span class="profile-eyebrow">Profile photo</span>
+                        <h2>Update your photo</h2>
+                        <p>Use a clear image for your Vetal Sand Solutions account.</p>
+                    </div>
+                    <div class="profile-form-field profile-upload-field">
+                        <div class="profile-photo-editor">
+                            <div class="profile-photo-preview">
+                                {% if profile.profile_photo %}
+                                    <img src="{{ profile.profile_photo.url }}" alt="Current profile photo" onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+                                    <span class="profile-photo-placeholder" hidden>No photo</span>
+                                {% else %}
+                                    <span class="profile-photo-placeholder">No photo</span>
+                                {% endif %}
+                            </div>
+                            <div class="profile-upload-column">
+                                <label class="form-label" for="{{ form.profile_photo.id_for_label }}">Choose a new photo</label>
+                                <div class="profile-upload-control">
+                                    <span class="profile-upload-icon" aria-hidden="true">+</span>
+                                    <span>
+                                        <strong>Choose new photo</strong>
+                                        <small>JPG, PNG or WEBP</small>
+                                    </span>
+                                    <input type="file" name="{{ form.profile_photo.html_name }}" id="{{ form.profile_photo.id_for_label }}" accept="image/*">
+                                </div>
+                                <p class="profile-upload-helper">JPG, PNG or WEBP</p>
+                                {% if profile.profile_photo %}
+                                    <label class="profile-clear-control" for="profile-photo-clear">
+                                        <input type="checkbox" name="{{ form.profile_photo.html_name }}-clear" id="profile-photo-clear">
+                                        Remove current photo
+                                    </label>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if form.profile_photo.errors %}<div class="profile-field-error">{{ form.profile_photo.errors }}</div>{% endif %}
+                    </div>
+                </section>
+
+                <div class="profile-divider"></div>
+                <button type="submit" class="btn btn-primary profile-save-button">Save Changes</button>
+            </form>
+
+            <nav class="profile-quick-links" aria-label="Quick access">
+                <span class="profile-eyebrow">Quick access</span>
+                <div class="profile-quick-link-list">
+                    <a href="{% url 'order_list' %}">My Orders <span aria-hidden="true">&#8594;</span></a>
+                    <a href="{% url 'wishlist_detail' %}">Wishlist <span aria-hidden="true">&#8594;</span></a>
+                    <a href="{% url 'cart_detail' %}">Cart <span aria-hidden="true">&#8594;</span></a>
+                    <a href="{% url 'account' %}">Account Dashboard <span aria-hidden="true">&#8594;</span></a>
+                </div>
+            </nav>
         </div>
     </div>
 </section>

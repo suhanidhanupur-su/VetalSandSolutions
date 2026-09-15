@@ -60,28 +60,37 @@ def checkout(request):
 	if request.method == 'POST':
 		form = CheckoutForm(request.POST)
 		if form.is_valid():
-			with transaction.atomic():
-				current_items, invalid_current_cart = _get_checkout_items(request)
-				if invalid_current_cart or not current_items:
-					messages.error(request, 'Your cart changed. Please review it before placing the order.')
-					return redirect('cart_detail')
+			current_items, invalid_current_cart = _get_checkout_items(request)
+			if invalid_current_cart or not current_items:
+				messages.error(request, 'Your cart changed. Please review it before placing the order.')
+				return redirect('cart_detail')
 
-				order = form.save(commit=False)
-				order.user = request.user
-				order.save()
-				Payment.objects.create(order=order)
-				OrderItem.objects.bulk_create(
-					[
-						OrderItem(order=order, product=item['product'], quantity=item['quantity'])
-						for item in current_items
-					]
+			if (
+				form.cleaned_data['payment_method'] == Order.PaymentMethod.RAZORPAY
+				and calculate_items_amount(current_items) is None
+			):
+				form.add_error(
+					'payment_method',
+					'Online payment is currently unavailable for this order because pricing has not been confirmed. Please choose Cash on Delivery or request a quote.',
 				)
+			else:
+				with transaction.atomic():
+					order = form.save(commit=False)
+					order.user = request.user
+					order.save()
+					Payment.objects.create(order=order)
+					OrderItem.objects.bulk_create(
+						[
+							OrderItem(order=order, product=item['product'], quantity=item['quantity'])
+							for item in current_items
+						]
+					)
 
-				request.session['cart'] = {}
-				request.session.modified = True
+					request.session['cart'] = {}
+					request.session.modified = True
 
-			messages.success(request, f'Order #{order.id} has been submitted successfully.')
-			return redirect('order_success', order_id=order.id)
+				messages.success(request, f'Order #{order.id} has been submitted successfully.')
+				return redirect('order_success', order_id=order.id)
 	else:
 		form = CheckoutForm(initial={
 			'full_name': request.user.get_full_name(),

@@ -81,7 +81,7 @@ class OrderFlowTests(TestCase):
 		self.assertContains(response, 'Checkout')
 		self.assertContains(response, self.product.name)
 		self.assertContains(response, 'Cash on Delivery')
-		self.assertContains(response, 'Online Payment')
+		self.assertContains(response, 'Pay Online with Razorpay')
 
 	def test_checkout_form_validates_required_fields(self):
 		self.client.force_login(self.user)
@@ -126,14 +126,10 @@ class OrderFlowTests(TestCase):
 
 		response = self.client.post(reverse('checkout'), checkout_data)
 
-		order = Order.objects.get(user=self.user)
-		self.assertRedirects(response, reverse('order_success', args=[order.id]))
-		self.assertEqual(order.payment_method, Order.PaymentMethod.RAZORPAY)
-		self.assertEqual(order.payment.payment_status, Payment.Status.PENDING)
-		self.assertIsNone(order.payment.amount)
-		success_response = self.client.get(reverse('order_success', args=[order.id]))
-		self.assertContains(success_response, 'Online payment is currently unavailable')
-		self.assertNotContains(success_response, 'Pay with Razorpay')
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Online payment is currently unavailable for this order because pricing has not been confirmed.')
+		self.assertEqual(Order.objects.count(), 0)
+		self.assertEqual(self.client.session['cart'], {str(self.product.id): 1})
 
 	def test_inactive_product_prevents_order_creation_and_preserves_cart(self):
 		inactive_product = Product.objects.create(

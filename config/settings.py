@@ -139,8 +139,8 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
 }
 
-RAZORPAY_KEY_ID = os.environ.get('rzp_test_TcGrixkris9wZ9', '')
-RAZORPAY_KEY_SECRET = os.environ.get('PgYNjQKlK6LVNYR5wcN9zZMd', '')
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
 RAZORPAY_CURRENCY = 'INR'
 RAZORPAY_TEST_MODE = True
 
