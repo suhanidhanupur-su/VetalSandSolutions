@@ -17,10 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from products import views as product_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
+    path('wishlist/', product_views.wishlist_detail, name='wishlist_detail'),
+    path('wishlist/add/<int:product_id>/', product_views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/remove/<int:product_id>/', product_views.remove_from_wishlist, name='remove_from_wishlist'),
     path('products/', include('products.urls')),
     path('cart/', include('cart.urls')),
     path('account/', include('accounts.urls')),

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Wishlist | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="wishlist-page">
+    <div class="container wishlist-page-container">
+        <div class="wishlist-intro">
+            <div>
+                <p class="section-kicker">Saved solutions</p>
+                <h1>Your Wishlist</h1>
+                <p>Keep the silica sand products you are considering close at hand.</p>
+            </div>
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">Explore Products</a>
+        </div>
+
+        {% if wishlist_items %}
+            <div class="row g-4">
+                {% for wishlist_item in wishlist_items %}
+                    {% with product=wishlist_item.product %}
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <article class="wishlist-card">
+                                <div class="wishlist-image-wrap">
+                                    {% if product.primary_image and product.primary_image.image %}
+                                        <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="wishlist-image">
+                                    {% else %}
+                                        <div class="product-placeholder" aria-label="No product image available">
+                                            <span>Product Image</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="wishlist-card-body">
+                                    <div class="product-meta">
+                                        <span class="product-category">{{ product.category.name }}</span>
+                                        {% if product.grade %}
+                                            <span class="product-grade">{{ product.grade }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <h2>{{ product.name }}</h2>
+                                    <p>{{ product.short_description|default:product.description|striptags|truncatechars:160 }}</p>
+
+                                    <div class="wishlist-card-actions">
+                                        <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary product-btn">View Product</a>
+                                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-secondary product-btn">Add to Cart</a>
+                                        <form method="post" action="{% url 'remove_from_wishlist' product.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="wishlist-remove-button">Remove from Wishlist</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state wishlist-empty-state text-center">
+                <h2>Your wishlist is empty</h2>
+                <p>Save products here while you explore our industrial silica sand solutions.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary">Explore Products</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,7 +1,9 @@
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
-from .models import Category, Product
+from .models import Category, Product, Wishlist
 
 
 def product_list(request):
@@ -26,6 +28,12 @@ def product_list(request):
 
     products = products.prefetch_related('images').order_by('-created_at')
 
+    wishlist_product_ids = set()
+    if request.user.is_authenticated:
+        wishlist_product_ids = set(
+            Wishlist.objects.filter(user=request.user, product__in=products).values_list('product_id', flat=True)
+        )
+
     for product in products:
         product.primary_image = product.images.filter(is_primary=True).first() or product.images.first()
 
@@ -45,6 +53,7 @@ def product_list(request):
         'search_query': search_query,
         'selected_category': selected_category,
         'selected_grade': selected_grade,
+        'wishlist_product_ids': wishlist_product_ids,
     }
     return render(request, 'products/product_list.html', context)
 
@@ -58,6 +67,10 @@ def product_detail(request, slug):
 
     product.primary_image = product.images.filter(is_primary=True).first() or product.images.first()
     product_images = list(product.images.all())
+
+    is_in_wishlist = request.user.is_authenticated and Wishlist.objects.filter(
+        user=request.user, product=product
+    ).exists()
 
     related_products = (
         Product.objects.filter(category=product.category, is_active=True)
@@ -75,5 +88,34 @@ def product_detail(request, slug):
         'product': product,
         'product_images': product_images,
         'related_products': related_products,
+        'is_in_wishlist': is_in_wishlist,
     }
     return render(request, 'products/product_detail.html', context)
+
+
+@login_required(login_url='login')
+def wishlist_detail(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related(
+        'product__category'
+    ).prefetch_related('product__images')
+
+    for wishlist_item in wishlist_items:
+        product = wishlist_item.product
+        product.primary_image = product.images.filter(is_primary=True).first() or product.images.first()
+
+    return render(request, 'products/wishlist.html', {'wishlist_items': wishlist_items})
+
+
+@login_required(login_url='login')
+@require_POST
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    Wishlist.objects.get_or_create(user=request.user, product=product)
+    return redirect(request.META.get('HTTP_REFERER') or 'wishlist_detail')
+
+
+@login_required(login_url='login')
+@require_POST
+def remove_from_wishlist(request, product_id):
+    Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
+    return redirect(request.META.get('HTTP_REFERER') or 'wishlist_detail')

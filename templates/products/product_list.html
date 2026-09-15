@@ -78,6 +78,14 @@
                         <div class="col-12 col-md-6 col-xl-3">
                             <article class="product-card">
                                 <div class="product-image-wrap">
+                                    <form method="post" action="{% if product.id in wishlist_product_ids %}{% url 'remove_from_wishlist' product.id %}{% else %}{% url 'add_to_wishlist' product.id %}{% endif %}" class="wishlist-card-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="wishlist-heart-button{% if product.id in wishlist_product_ids %} is-active{% endif %}" aria-label="{% if product.id in wishlist_product_ids %}Remove {{ product.name }} from wishlist{% else %}Add {{ product.name }} to wishlist{% endif %}" title="{% if product.id in wishlist_product_ids %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
                                     {% if product.primary_image and product.primary_image.image %}
                                         <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="product-image">
                                     {% else %}

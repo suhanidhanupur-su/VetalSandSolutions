@@ -64,6 +64,10 @@
 
                         <div class="product-detail-actions">
                             <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
+                            <form method="post" action="{% if is_in_wishlist %}{% url 'remove_from_wishlist' product.id %}{% else %}{% url 'add_to_wishlist' product.id %}{% endif %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary">{% if is_in_wishlist %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}</button>
+                            </form>
                             <a href="{% url 'quote' %}" class="btn btn-secondary">Request a Quote</a>
                         </div>
 

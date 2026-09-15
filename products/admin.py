@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, Wishlist
 
 
 class ProductImageInline(admin.TabularInline):
@@ -30,3 +30,11 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'grade', 'description')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]
+
+
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('user__username', 'user__email', 'product__name')
+    date_hierarchy = 'created_at'

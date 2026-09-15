@@ -31,6 +31,14 @@
                     {% endif %}
                 </a>
                 {% if user.is_authenticated %}
+                    <a class="nav-cart nav-wishlist" href="{% url 'wishlist_detail' %}" aria-label="Wishlist">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        {% if wishlist_count > 0 %}
+                            <span class="cart-count-badge">{{ wishlist_count }}</span>
+                        {% endif %}
+                    </a>
                     <a class="btn btn-outline-light btn-sm" href="{% url 'account' %}">Account</a>
                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                         {% csrf_token %}
