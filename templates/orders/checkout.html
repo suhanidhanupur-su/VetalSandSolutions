@@ -27,13 +27,39 @@
 
                         <div class="row g-3">
                             {% for field in form %}
-                                <div class="{% if field.name == 'address' or field.name == 'notes' %}col-12{% else %}col-12 col-md-6{% endif %}">
-                                    <label class="order-form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
-                                    {{ field }}
-                                    {% if field.errors %}<div class="order-form-error">{{ field.errors }}</div>{% endif %}
-                                </div>
+                                {% if field.name != 'payment_method' %}
+                                    <div class="{% if field.name == 'address' or field.name == 'notes' %}col-12{% else %}col-12 col-md-6{% endif %}">
+                                        <label class="order-form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                                        {{ field }}
+                                        {% if field.errors %}<div class="order-form-error">{{ field.errors }}</div>{% endif %}
+                                    </div>
+                                {% endif %}
                             {% endfor %}
                         </div>
+
+                        <fieldset class="payment-method-fieldset">
+                            <legend class="order-form-label">Payment Method</legend>
+                            <div class="payment-method-options">
+                                <label class="payment-method-card" for="id_payment_method_cod">
+                                    <input type="radio" name="payment_method" value="cod" id="id_payment_method_cod"{% if form.payment_method.value == 'cod' or not form.payment_method.value %} checked{% endif %}>
+                                    <span class="payment-method-card-content">
+                                        <strong>Cash on Delivery</strong>
+                                        <small>Pay when your order is delivered.</small>
+                                    </span>
+                                </label>
+                                <label class="payment-method-card" for="id_payment_method_razorpay">
+                                    <input type="radio" name="payment_method" value="razorpay" id="id_payment_method_razorpay"{% if form.payment_method.value == 'razorpay' %} checked{% endif %}>
+                                    <span class="payment-method-card-content">
+                                        <strong>Online Payment</strong>
+                                        <small>Secure payment via Razorpay.</small>
+                                    </span>
+                                </label>
+                            </div>
+                            {% if not payment_available %}
+                                <p class="payment-method-unavailable">Online payment is currently unavailable for this order. Please contact us for pricing.</p>
+                            {% endif %}
+                            {% if form.payment_method.errors %}<div class="order-form-error">{{ form.payment_method.errors }}</div>{% endif %}
+                        </fieldset>
 
                         <button type="submit" class="btn btn-primary order-submit-btn">Submit Order Request</button>
                     </form>

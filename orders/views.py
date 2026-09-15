@@ -1,10 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 
 from products.models import Product
+from payments.models import Payment
+from payments.services import calculate_items_amount, calculate_order_amount
 
 from .forms import CheckoutForm
 from .models import Order, OrderItem
@@ -66,6 +69,7 @@ def checkout(request):
 				order = form.save(commit=False)
 				order.user = request.user
 				order.save()
+				Payment.objects.create(order=order)
 				OrderItem.objects.bulk_create(
 					[
 						OrderItem(order=order, product=item['product'], quantity=item['quantity'])
@@ -79,12 +83,17 @@ def checkout(request):
 			messages.success(request, f'Order #{order.id} has been submitted successfully.')
 			return redirect('order_success', order_id=order.id)
 	else:
-		form = CheckoutForm(initial={'full_name': request.user.get_full_name(), 'email': request.user.email})
+		form = CheckoutForm(initial={
+			'full_name': request.user.get_full_name(),
+			'email': request.user.email,
+			'payment_method': Order.PaymentMethod.COD,
+		})
 
 	context = {
 		'form': form,
 		'cart_items': cart_items,
 		'cart_count': sum(item['quantity'] for item in cart_items),
+		'payment_available': calculate_items_amount(cart_items) is not None,
 	}
 	return render(request, 'orders/checkout.html', context)
 
@@ -92,11 +101,19 @@ def checkout(request):
 @login_required(login_url='login')
 def order_success(request, order_id):
 	order = get_object_or_404(
-		Order.objects.prefetch_related('items__product'),
+		Order.objects.select_related('payment').prefetch_related('items__product'),
 		id=order_id,
 		user=request.user,
 	)
-	return render(request, 'orders/order_success.html', {'order': order})
+	payment_ready = bool(
+		getattr(order, 'payment', None)
+		and order.payment_method == Order.PaymentMethod.RAZORPAY
+		and calculate_order_amount(order) is not None
+		and order.payment.payment_status != Payment.Status.PAID
+		and getattr(settings, 'RAZORPAY_TEST_MODE', False)
+		and getattr(settings, 'RAZORPAY_KEY_ID', '').startswith('rzp_test_')
+	)
+	return render(request, 'orders/order_success.html', {'order': order, 'payment_ready': payment_ready})
 
 
 @login_required(login_url='login')

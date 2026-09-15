@@ -25,6 +25,13 @@ class Product(models.Model):
     short_description = models.CharField(max_length=300, blank=True)
     description = models.TextField(blank=True)
     grade = models.CharField(max_length=50, blank=True)
+    price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text='Enter the product price in INR. Leave blank if pricing is available only on request.',
+    )
     specifications = models.TextField(blank=True)
     applications = models.TextField(blank=True)
     industries = models.TextField(blank=True)

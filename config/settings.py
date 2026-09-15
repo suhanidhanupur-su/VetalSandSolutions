@@ -139,6 +139,11 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
 }
 
+RAZORPAY_KEY_ID = os.environ.get('rzp_test_TcGrixkris9wZ9', '')
+RAZORPAY_KEY_SECRET = os.environ.get('PgYNjQKlK6LVNYR5wcN9zZMd', '')
+RAZORPAY_CURRENCY = 'INR'
+RAZORPAY_TEST_MODE = True
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -1,6 +1,40 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from decimal import Decimal
+
+from django.contrib import admin
 from django.test import TestCase
+
+from .models import Category, Product
+
+
+class ProductPriceTests(TestCase):
+	def setUp(self):
+		self.category = Category.objects.create(name='Industrial', slug='industrial')
+
+	def test_price_is_optional_and_admin_exposes_it(self):
+		product = Product.objects.create(
+			category=self.category,
+			name='Unpriced Sand',
+			slug='unpriced-sand',
+		)
+
+		self.assertIsNone(product.price)
+		self.assertIn('price', admin.site._registry[Product].list_display)
+		self.assertEqual(
+			Product._meta.get_field('price').help_text,
+			'Enter the product price in INR. Leave blank if pricing is available only on request.',
+		)
+
+	def test_price_accepts_admin_entered_inr_value(self):
+		product = Product.objects.create(
+			category=self.category,
+			name='Priced Sand',
+			slug='priced-sand',
+			price=Decimal('1250.00'),
+		)
+
+		self.assertEqual(product.price, Decimal('1250.00'))
 
 from .models import Category, Product, Wishlist
 

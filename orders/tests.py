@@ -6,6 +6,7 @@ from django.urls import reverse
 from products.models import Category, Product
 
 from .models import Order, OrderItem
+from payments.models import Payment
 
 
 class OrderFlowTests(TestCase):
@@ -70,6 +71,18 @@ class OrderFlowTests(TestCase):
 		self.assertRedirects(response, reverse('cart_detail'))
 		self.assertEqual(response.wsgi_request.session.get('cart', {}), {})
 
+	def test_checkout_opens_with_products_in_cart(self):
+		self.client.force_login(self.user)
+		self._set_cart({self.product.id: 1})
+
+		response = self.client.get(reverse('checkout'))
+
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Checkout')
+		self.assertContains(response, self.product.name)
+		self.assertContains(response, 'Cash on Delivery')
+		self.assertContains(response, 'Online Payment')
+
 	def test_checkout_form_validates_required_fields(self):
 		self.client.force_login(self.user)
 		self._set_cart({self.product.id: 2})
@@ -91,15 +104,36 @@ class OrderFlowTests(TestCase):
 		self.assertRedirects(response, reverse('order_success', args=[order.id]))
 		self.assertEqual(order.full_name, 'Order Customer')
 		self.assertEqual(order.status, Order.Status.PENDING)
+		self.assertEqual(order.payment_method, Order.PaymentMethod.COD)
 		self.assertEqual(
 			set(order.items.values_list('product_id', 'quantity')),
 			{(self.product.id, 2), (self.second_product.id, 1)},
 		)
 		self.assertEqual(self.client.session['cart'], {})
+		self.assertTrue(Payment.objects.filter(order=order, payment_status=Payment.Status.PENDING).exists())
 
 		success_response = self.client.get(reverse('order_success', args=[order.id]))
 		self.assertContains(success_response, f'#{order.id}')
 		self.assertContains(success_response, 'B2B pricing')
+		self.assertContains(success_response, 'Online payment is currently unavailable')
+		self.assertNotContains(success_response, 'Pay with Razorpay')
+
+	def test_online_payment_selection_stays_pending_without_verified_amount(self):
+		self.client.force_login(self.user)
+		self._set_cart({self.product.id: 1})
+		checkout_data = self._checkout_data()
+		checkout_data['payment_method'] = Order.PaymentMethod.RAZORPAY
+
+		response = self.client.post(reverse('checkout'), checkout_data)
+
+		order = Order.objects.get(user=self.user)
+		self.assertRedirects(response, reverse('order_success', args=[order.id]))
+		self.assertEqual(order.payment_method, Order.PaymentMethod.RAZORPAY)
+		self.assertEqual(order.payment.payment_status, Payment.Status.PENDING)
+		self.assertIsNone(order.payment.amount)
+		success_response = self.client.get(reverse('order_success', args=[order.id]))
+		self.assertContains(success_response, 'Online payment is currently unavailable')
+		self.assertNotContains(success_response, 'Pay with Razorpay')
 
 	def test_inactive_product_prevents_order_creation_and_preserves_cart(self):
 		inactive_product = Product.objects.create(
@@ -140,6 +174,18 @@ class OrderFlowTests(TestCase):
 		response = self.client.get(reverse('order_detail', args=[order.id]))
 
 		self.assertEqual(response.status_code, 404)
+
+	def test_order_success_and_detail_pages_open_for_owner(self):
+		order = Order.objects.create(user=self.user, **self._checkout_data())
+		OrderItem.objects.create(order=order, product=self.product, quantity=1)
+		self.client.force_login(self.user)
+
+		success_response = self.client.get(reverse('order_success', args=[order.id]))
+		detail_response = self.client.get(reverse('order_detail', args=[order.id]))
+
+		self.assertEqual(success_response.status_code, 200)
+		self.assertEqual(detail_response.status_code, 200)
+		self.assertContains(detail_response, self.product.name)
 
 	def test_order_admin_and_inline_are_registered(self):
 		self.assertIn(Order, admin.site._registry)

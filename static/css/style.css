@@ -2628,6 +2628,70 @@ textarea.order-form-control {
     margin-top: 0.2rem;
 }
 
+.payment-method-fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.payment-method-fieldset legend {
+    float: none;
+    width: 100%;
+    margin-bottom: 0.7rem;
+}
+
+.payment-method-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.payment-method-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-height: 5.5rem;
+    padding: 1rem;
+    border: 1px solid rgba(155, 61, 32, 0.2);
+    border-radius: 0.9rem;
+    background: rgba(247, 241, 232, 0.55);
+    cursor: pointer;
+    transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.payment-method-card:has(input:checked) {
+    border-color: var(--primary);
+    background: rgba(155, 61, 32, 0.08);
+    box-shadow: 0 0 0 0.15rem rgba(155, 61, 32, 0.1);
+}
+
+.payment-method-card input {
+    margin-top: 0.2rem;
+    accent-color: var(--primary);
+}
+
+.payment-method-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.payment-method-card-content strong {
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.payment-method-card-content small {
+    color: rgba(33, 27, 24, 0.68);
+    line-height: 1.4;
+}
+
+.payment-method-unavailable {
+    margin: 0.7rem 0 0;
+    color: var(--primary);
+    font-size: 0.82rem;
+}
+
 .checkout-summary-panel {
     position: sticky;
     top: 1.5rem;
@@ -2876,6 +2940,10 @@ textarea.order-form-control {
 
     .checkout-summary-panel {
         position: static;
+    }
+
+    .payment-method-options {
+        grid-template-columns: 1fr;
     }
 }
 

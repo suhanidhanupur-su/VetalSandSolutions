@@ -6,6 +6,10 @@ from products.models import Product
 
 
 class Order(models.Model):
+	class PaymentMethod(models.TextChoices):
+		COD = 'cod', 'Cash on Delivery'
+		RAZORPAY = 'razorpay', 'Online Payment'
+
 	class Status(models.TextChoices):
 		PENDING = 'pending', 'Pending'
 		CONFIRMED = 'confirmed', 'Confirmed'
@@ -23,6 +27,11 @@ class Order(models.Model):
 	state = models.CharField(max_length=100)
 	pincode = models.CharField(max_length=20)
 	notes = models.TextField(blank=True)
+	payment_method = models.CharField(
+		max_length=20,
+		choices=PaymentMethod.choices,
+		default=PaymentMethod.COD,
+	)
 	status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

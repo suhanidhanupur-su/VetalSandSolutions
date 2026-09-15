@@ -9,11 +9,18 @@
             <p class="section-kicker">Request received</p>
             <h1>Thank you, {{ order.full_name }}.</h1>
             <p class="order-confirmation-lead">Your order request has been submitted. Our team will contact you with B2B pricing and next steps.</p>
+            {% if not payment_ready %}
+                <div class="pricing-request-box">
+                    <strong>Online payment is currently unavailable for this order.</strong>
+                    <p>Please contact us for pricing. Payment details will be added after commercial pricing is confirmed.</p>
+                </div>
+            {% endif %}
 
             <div class="order-summary-grid">
                 <div><span>Order number</span><strong>#{{ order.id }}</strong></div>
                 <div><span>Order date</span><strong>{{ order.created_at|date:'d M Y, H:i' }}</strong></div>
                 <div><span>Status</span><strong>{{ order.get_status_display }}</strong></div>
+                <div><span>Payment Method</span><strong>{{ order.get_payment_method_display }}</strong></div>
             </div>
 
             <div class="order-item-list">
@@ -29,8 +36,70 @@
             <div class="order-confirmation-actions">
                 <a href="{% url 'order_list' %}" class="btn btn-primary">View My Orders</a>
                 <a href="{% url 'product_list' %}" class="btn btn-secondary">Continue Shopping</a>
+                {% if payment_ready %}
+                    <button type="button" id="razorpay-pay-button" class="btn btn-primary">Pay with Razorpay</button>
+                {% endif %}
             </div>
         </div>
     </div>
 </section>
+{% if payment_ready %}
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        const payButton = document.getElementById('razorpay-pay-button');
+        payButton.addEventListener('click', async () => {
+            payButton.disabled = true;
+            const response = await fetch("{% url 'create_razorpay_order' order.id %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await response.json();
+            if (!data.success) {
+                window.location.href = "{% url 'order_success' order.id %}";
+                return;
+            }
+
+            const razorpay = new Razorpay({
+                key: data.key_id,
+                order_id: data.razorpay_order_id,
+                currency: data.currency,
+                name: 'Vetal Sand Solutions',
+                description: 'Order #{{ order.id }}',
+                handler: async (paymentResponse) => {
+                    const verificationResponse = await fetch("{% url 'verify_payment' order.id %}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams(paymentResponse)
+                    });
+                    const verification = await verificationResponse.json();
+                    window.location.href = verification.success
+                        ? verification.redirect_url
+                        : "{% url 'order_success' order.id %}";
+                },
+                modal: {
+                    ondismiss: () => {
+                        const failureForm = document.createElement('form');
+                        failureForm.method = 'POST';
+                        failureForm.action = "{% url 'payment_failed' order.id %}";
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = 'csrfmiddlewaretoken';
+                        csrfInput.value = '{{ csrf_token }}';
+                        failureForm.appendChild(csrfInput);
+                        document.body.appendChild(failureForm);
+                        failureForm.submit();
+                    }
+                }
+            });
+            razorpay.open();
+        });
+    </script>
+{% endif %}
 {% endblock %}

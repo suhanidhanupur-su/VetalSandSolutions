@@ -44,6 +44,7 @@
                         <h2>Customer details</h2>
                     </div>
                     <dl class="order-contact-details">
+                        <div><dt>Payment Method</dt><dd>{{ order.get_payment_method_display }}</dd></div>
                         <div><dt>Name</dt><dd>{{ order.full_name }}</dd></div>
                         <div><dt>Email</dt><dd>{{ order.email }}</dd></div>
                         <div><dt>Phone</dt><dd>{{ order.phone }}</dd></div>

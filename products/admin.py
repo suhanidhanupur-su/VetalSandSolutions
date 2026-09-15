@@ -25,7 +25,21 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'grade', 'is_active', 'is_featured', 'created_at')
+    list_display = ('name', 'category', 'grade', 'price', 'is_active', 'is_featured', 'created_at')
+    fields = (
+        'category',
+        'name',
+        'slug',
+        'short_description',
+        'description',
+        'grade',
+        'price',
+        'specifications',
+        'applications',
+        'industries',
+        'is_active',
+        'is_featured',
+    )
     list_filter = ('category', 'is_active', 'is_featured', 'grade')
     search_fields = ('name', 'grade', 'description')
     prepopulated_fields = {'slug': ('name',)}
