@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Submitted | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="orders-page">
+    <div class="container orders-page-container">
+        <div class="order-confirmation-panel">
+            <p class="section-kicker">Request received</p>
+            <h1>Thank you, {{ order.full_name }}.</h1>
+            <p class="order-confirmation-lead">Your order request has been submitted. Our team will contact you with B2B pricing and next steps.</p>
+
+            <div class="order-summary-grid">
+                <div><span>Order number</span><strong>#{{ order.id }}</strong></div>
+                <div><span>Order date</span><strong>{{ order.created_at|date:'d M Y, H:i' }}</strong></div>
+                <div><span>Status</span><strong>{{ order.get_status_display }}</strong></div>
+            </div>
+
+            <div class="order-item-list">
+                <h2>Ordered products</h2>
+                {% for item in order.items.all %}
+                    <div class="order-line-item">
+                        <span>{{ item.product.name }}</span>
+                        <strong>Qty {{ item.quantity }}</strong>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-confirmation-actions">
+                <a href="{% url 'order_list' %}" class="btn btn-primary">View My Orders</a>
+                <a href="{% url 'product_list' %}" class="btn btn-secondary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

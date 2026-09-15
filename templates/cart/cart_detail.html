@@ -114,6 +114,11 @@
                         </div>
 
                         <div class="cart-summary-actions">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'checkout' %}" class="btn btn-primary cart-checkout-btn">Proceed to Checkout</a>
+                            {% else %}
+                                <a href="{% url 'login' %}?next={% url 'checkout' %}" class="btn btn-primary cart-checkout-btn">Login to Checkout</a>
+                            {% endif %}
                             <a href="{% url 'quote' %}" class="btn btn-primary cart-quote-btn">Request a Quote</a>
                         </div>
 

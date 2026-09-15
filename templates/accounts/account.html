@@ -8,7 +8,7 @@
             <div class="col-lg-8 text-center">
                 <span class="section-kicker">Vetal Sand Solutions</span>
                 <h1 class="page-title">My Account</h1>
-                <p class="page-subtitle">Manage your industrial product preferences.</p>
+                <p class="page-subtitle">Welcome back, {{ user.username }}. Manage your industrial product preferences.</p>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="account-links">
-                        <a class="account-link" href="#">My Orders</a>
+                        <a class="account-link" href="{% url 'order_list' %}">My Orders</a>
                         <a class="account-link" href="{% url 'wishlist_detail' %}">Wishlist</a>
                         <a class="account-link" href="#">Profile</a>
                     </div>

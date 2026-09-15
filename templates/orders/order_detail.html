@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="orders-page">
+    <div class="container orders-page-container">
+        <div class="orders-page-heading order-detail-heading">
+            <div>
+                <p class="section-kicker">Order details</p>
+                <h1>Order #{{ order.id }}</h1>
+                <p>Submitted {{ order.created_at|date:'d M Y, H:i' }}</p>
+            </div>
+            <span class="order-status-pill">{{ order.get_status_display }}</span>
+        </div>
+
+        <div class="row g-4 g-lg-5 align-items-start">
+            <div class="col-12 col-lg-7">
+                <div class="order-panel">
+                    <div class="order-panel-heading">
+                        <h2>Ordered products</h2>
+                    </div>
+                    <div class="order-item-list">
+                        {% for item in order.items.all %}
+                            <div class="order-line-item">
+                                <div>
+                                    <span>{{ item.product.name }}</span>
+                                    <small>{{ item.product.category.name }}{% if item.product.grade %} · {{ item.product.grade }}{% endif %}</small>
+                                </div>
+                                <strong>Qty {{ item.quantity }}</strong>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="pricing-request-box">
+                        <strong>B2B pricing available on request</strong>
+                        <p>Pricing and delivery details will be confirmed by our team. No payment has been taken.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <div class="order-panel">
+                    <div class="order-panel-heading">
+                        <h2>Customer details</h2>
+                    </div>
+                    <dl class="order-contact-details">
+                        <div><dt>Name</dt><dd>{{ order.full_name }}</dd></div>
+                        <div><dt>Email</dt><dd>{{ order.email }}</dd></div>
+                        <div><dt>Phone</dt><dd>{{ order.phone }}</dd></div>
+                        <div><dt>Address</dt><dd>{{ order.address|linebreaksbr }}, {{ order.city }}, {{ order.state }} {{ order.pincode }}</dd></div>
+                        {% if order.notes %}<div><dt>Notes</dt><dd>{{ order.notes|linebreaksbr }}</dd></div>{% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'order_list' %}" class="btn btn-secondary order-back-link">Back to My Orders</a>
+    </div>
+</section>
+{% endblock %}

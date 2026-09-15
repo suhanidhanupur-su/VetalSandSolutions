@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="orders-page">
+    <div class="container orders-page-container">
+        <div class="orders-page-heading">
+            <p class="section-kicker">Account</p>
+            <h1>My Orders</h1>
+            <p>Review your submitted product requests and their current status.</p>
+        </div>
+
+        {% if orders %}
+            <div class="order-list">
+                {% for order in orders %}
+                    <article class="order-list-card">
+                        <div>
+                            <span class="order-list-label">Order #{{ order.id }}</span>
+                            <h2>{{ order.full_name }}</h2>
+                            <p>{{ order.created_at|date:'d M Y, H:i' }} · {{ order.item_count }} product{{ order.item_count|pluralize }}</p>
+                        </div>
+                        <div class="order-list-status">
+                            <span>{{ order.get_status_display }}</span>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-secondary">View Order</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state order-empty-state text-center">
+                <h2>No orders yet</h2>
+                <p>Your submitted product requests will appear here.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary">Explore Products</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

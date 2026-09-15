@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="orders-page">
+    <div class="container orders-page-container">
+        <div class="orders-page-heading">
+            <p class="section-kicker">Order enquiry</p>
+            <h1>Checkout</h1>
+            <p>Share your delivery details and our team will follow up with B2B pricing and availability.</p>
+        </div>
+
+        <div class="row g-4 g-lg-5 align-items-start">
+            <div class="col-12 col-lg-7">
+                <div class="order-panel">
+                    <div class="order-panel-heading">
+                        <h2>Delivery details</h2>
+                        <p>All fields are required unless marked optional.</p>
+                    </div>
+
+                    <form method="post" class="order-form" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            {% for field in form %}
+                                <div class="{% if field.name == 'address' or field.name == 'notes' %}col-12{% else %}col-12 col-md-6{% endif %}">
+                                    <label class="order-form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                                    {{ field }}
+                                    {% if field.errors %}<div class="order-form-error">{{ field.errors }}</div>{% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary order-submit-btn">Submit Order Request</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <aside class="order-panel checkout-summary-panel">
+                    <div class="order-panel-heading">
+                        <span class="order-panel-kicker">Your selection</span>
+                        <h2>{{ cart_count }} item{{ cart_count|pluralize }}</h2>
+                    </div>
+
+                    <div class="checkout-items">
+                        {% for item in cart_items %}
+                            <div class="checkout-item">
+                                <div>
+                                    <h3>{{ item.product.name }}</h3>
+                                    <p>{{ item.product.category.name }}{% if item.product.grade %} · {{ item.product.grade }}{% endif %}</p>
+                                </div>
+                                <span class="checkout-quantity">Qty {{ item.quantity }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pricing-request-box">
+                        <strong>B2B pricing available on request</strong>
+                        <p>No product prices are displayed. Our team will confirm pricing, availability and delivery details after reviewing your request.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

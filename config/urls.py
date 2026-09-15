@@ -28,5 +28,6 @@ urlpatterns = [
     path('wishlist/remove/<int:product_id>/', product_views.remove_from_wishlist, name='remove_from_wishlist'),
     path('products/', include('products.urls')),
     path('cart/', include('cart.urls')),
+    path('', include('orders.urls')),
     path('account/', include('accounts.urls')),
 ]
