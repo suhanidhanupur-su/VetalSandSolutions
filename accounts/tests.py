@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from .models import Profile
+
 
 class AuthenticationUrlTests(TestCase):
     def setUp(self):
@@ -111,3 +113,42 @@ class AuthenticationUrlTests(TestCase):
         self.assertContains(logged_in_response, '>Account<')
         self.assertContains(logged_in_response, '>Logout<')
         self.assertNotContains(logged_in_response, '>Register<')
+
+    def test_profile_page_is_protected_and_is_not_account_dashboard(self):
+        response = self.client.get(reverse('edit_profile'))
+
+        self.assertRedirects(response, f'{reverse("login")}?next={reverse("edit_profile")}')
+
+        self.client.force_login(self.user)
+        profile_response = self.client.get(reverse('edit_profile'))
+        account_response = self.client.get(reverse('account'))
+
+        self.assertEqual(profile_response.status_code, 200)
+        self.assertContains(profile_response, 'My Profile')
+        self.assertContains(profile_response, 'Full name')
+        self.assertContains(profile_response, 'Phone number')
+        self.assertContains(profile_response, 'Save Changes')
+        self.assertContains(account_response, 'My Account')
+
+    def test_profile_update_only_changes_logged_in_users_profile(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse('edit_profile'),
+            {'full_name': 'Updated Customer', 'phone_number': '+91 9876543210'},
+        )
+
+        self.assertRedirects(response, reverse('edit_profile'))
+        profile = Profile.objects.get(user=self.user)
+        self.assertEqual(profile.full_name, 'Updated Customer')
+        self.assertEqual(profile.phone_number, '+91 9876543210')
+
+    def test_account_and_navbar_profile_links_use_edit_profile(self):
+        self.client.force_login(self.user)
+
+        account_response = self.client.get(reverse('account'))
+        home_response = self.client.get(reverse('home'))
+
+        self.assertContains(account_response, reverse('edit_profile'))
+        self.assertContains(home_response, reverse('edit_profile'))
+        self.assertNotContains(home_response, 'href="/account/">My Profile')

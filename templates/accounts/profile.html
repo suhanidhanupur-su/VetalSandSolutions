@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Vetal Sand Solutions{% endblock %}
+
+{% block content %}
+<section class="inner-page-hero auth-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="section-kicker">Vetal Sand Solutions</span>
+                <h1 class="page-title">My Profile</h1>
+                <p class="page-subtitle">Keep your contact details up to date for smoother sourcing support.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="auth-section profile-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-7">
+                <div class="auth-card profile-card">
+                    <div class="auth-card-header">
+                        <h3>Profile details</h3>
+                        <span class="auth-card-subtitle">Username: {{ request.user.username }} · Email: {{ request.user.email|default:'No email added' }}</span>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        {% for field in form %}
+                            <div class="profile-form-field">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                            </div>
+                        {% endfor %}
+
+                        {% if profile.profile_photo %}
+                            <div class="profile-photo-preview">
+                                <span class="profile-photo-label">Current profile photo</span>
+                                <img src="{{ profile.profile_photo.url }}" alt="Current profile photo">
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

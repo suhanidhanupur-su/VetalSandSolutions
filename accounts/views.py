@@ -6,7 +6,8 @@ from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .forms import RegistrationForm
+from .forms import ProfileForm, RegistrationForm
+from .models import Profile
 
 
 def register_view(request):
@@ -55,3 +56,22 @@ def logout_view(request):
 @login_required(login_url='login')
 def account_view(request):
     return render(request, 'accounts/account.html', {'user': request.user})
+
+
+@login_required(login_url='login')
+def edit_profile_view(request):
+    profile, _ = Profile.objects.get_or_create(
+        user=request.user,
+        defaults={'full_name': request.user.get_full_name()},
+    )
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('edit_profile')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile})

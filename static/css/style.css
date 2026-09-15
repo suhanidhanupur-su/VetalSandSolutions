@@ -347,6 +347,79 @@ select {
     fill: currentColor;
 }
 
+.account-dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.account-dropdown-menu {
+    min-width: 12.5rem;
+    margin-top: 0.55rem !important;
+    padding: 0.45rem;
+    background: rgba(252, 250, 246, 0.99);
+}
+
+.account-dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.2rem;
+    padding: 0.5rem 0.65rem;
+    border-radius: 0.55rem;
+    color: var(--dark);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.account-dropdown-menu .dropdown-item:hover,
+.account-dropdown-menu .dropdown-item:focus-visible {
+    background: rgba(155, 61, 32, 0.1);
+    color: var(--primary);
+}
+
+.account-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+
+.account-menu-item-with-count {
+    justify-content: space-between;
+}
+
+.account-menu-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: rgba(155, 61, 32, 0.12);
+    color: var(--primary);
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.account-dropdown-menu .dropdown-divider {
+    border-color: rgba(198, 154, 90, 0.3);
+}
+
+.account-dropdown-menu form {
+    margin: 0;
+}
+
+.account-logout-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    text-align: left;
+}
+
 .navbar-actions .btn-quote {
     background: var(--primary);
     border-color: var(--primary);
@@ -1198,10 +1271,6 @@ select {
     position: relative;
 }
 
-.nav-wishlist {
-    margin-left: 0.1rem;
-}
-
 @media (max-width: 575.98px) {
     .wishlist-intro {
         align-items: flex-start;
@@ -1325,6 +1394,61 @@ select {
 .account-actions {
     padding-top: 16px;
     border-top: 1px solid rgba(38, 65, 41, 0.12);
+}
+
+.profile-card form input[type="text"],
+.profile-card form input[type="file"] {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid rgba(155, 61, 32, 0.22);
+    border-radius: 0.75rem;
+    background: rgba(247, 241, 232, 0.72);
+    color: var(--dark);
+}
+
+.profile-card form input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.22rem rgba(155, 61, 32, 0.12);
+}
+
+.profile-form-field {
+    margin-bottom: 1.1rem;
+}
+
+.profile-form-field .form-label {
+    display: block;
+    color: var(--dark);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.55rem;
+    text-transform: uppercase;
+}
+
+.profile-photo-preview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding: 0.9rem;
+    border: 1px solid rgba(232, 216, 197, 0.95);
+    border-radius: 0.9rem;
+    background: rgba(247, 241, 232, 0.55);
+}
+
+.profile-photo-preview img {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(198, 154, 90, 0.45);
+}
+
+.profile-photo-label {
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 700;
 }
 
 @media (max-width: 991px) {
