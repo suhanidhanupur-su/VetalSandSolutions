@@ -104,6 +104,11 @@
                                     </div>
 
                                     <h3>{{ product.name }}</h3>
+                                    {% if product.price is not None %}
+                                        <p class="product-price">INR {{ product.price|floatformat:2 }}</p>
+                                    {% else %}
+                                        <p class="product-price">Price available on request</p>
+                                    {% endif %}
                                     <p>{{ product.short_description|default:product.description|striptags|truncatechars:140 }}</p>
 
                                     <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary product-btn">View Details</a>

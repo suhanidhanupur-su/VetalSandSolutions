@@ -50,7 +50,7 @@ class PaymentModelTests(TestCase):
 		self.assertIn('payment_status', admin.site._registry[Payment].list_filter)
 
 	def test_razorpay_creation_refuses_missing_amount(self):
-		self.order.payment_method = Order.PaymentMethod.RAZORPAY
+		self.order.payment_method = Order.PaymentMethod.ONLINE
 		self.order.save(update_fields=['payment_method'])
 		category = Category.objects.create(name='Industrial', slug='industrial')
 		product = Product.objects.create(category=category, name='Unpriced', slug='unpriced')
@@ -76,8 +76,9 @@ class PaymentModelTests(TestCase):
 			price=1250,
 		)
 		OrderItem.objects.create(order=self.order, product=product, quantity=2)
-		self.order.payment_method = Order.PaymentMethod.RAZORPAY
-		self.order.save(update_fields=['payment_method'])
+		self.order.payment_method = Order.PaymentMethod.ONLINE
+		self.order.total_amount = Decimal('2500.00')
+		self.order.save(update_fields=['payment_method', 'total_amount'])
 		settings_mock.RAZORPAY_TEST_MODE = True
 		settings_mock.RAZORPAY_KEY_ID = 'rzp_test_example'
 		settings_mock.RAZORPAY_KEY_SECRET = 'test_secret'
@@ -106,7 +107,7 @@ class PaymentModelTests(TestCase):
 		self.assertEqual(response.status_code, 404)
 
 	def test_missing_verification_fields_fail_payment(self):
-		self.order.payment_method = Order.PaymentMethod.RAZORPAY
+		self.order.payment_method = Order.PaymentMethod.ONLINE
 		self.order.save(update_fields=['payment_method'])
 		payment = Payment.objects.create(order=self.order, payment_id='order_test_123')
 		self.client.force_login(self.order.user)
@@ -130,7 +131,7 @@ class PaymentModelTests(TestCase):
 
 	@patch('payments.views._razorpay_client')
 	def test_valid_signature_marks_payment_paid_and_confirms_order(self, client_factory):
-		self.order.payment_method = Order.PaymentMethod.RAZORPAY
+		self.order.payment_method = Order.PaymentMethod.ONLINE
 		self.order.save(update_fields=['payment_method'])
 		payment = Payment.objects.create(order=self.order, payment_id='order_test_123')
 		client = client_factory.return_value

@@ -65,23 +65,30 @@ def checkout(request):
 				messages.error(request, 'Your cart changed. Please review it before placing the order.')
 				return redirect('cart_detail')
 
+			current_total = calculate_items_amount(current_items)
 			if (
-				form.cleaned_data['payment_method'] == Order.PaymentMethod.RAZORPAY
-				and calculate_items_amount(current_items) is None
+				form.cleaned_data['payment_method'] == Order.PaymentMethod.ONLINE
+				and current_total is None
 			):
 				form.add_error(
 					'payment_method',
-					'Online payment is currently unavailable for this order because pricing has not been confirmed. Please choose Cash on Delivery or request a quote.',
+					'Online payment is currently unavailable for this order because pricing has not been configured.',
 				)
 			else:
 				with transaction.atomic():
 					order = form.save(commit=False)
 					order.user = request.user
+					order.total_amount = current_total
 					order.save()
 					Payment.objects.create(order=order)
 					OrderItem.objects.bulk_create(
 						[
-							OrderItem(order=order, product=item['product'], quantity=item['quantity'])
+							OrderItem(
+								order=order,
+								product=item['product'],
+								quantity=item['quantity'],
+								unit_price=item['product'].price,
+							)
 							for item in current_items
 						]
 					)
@@ -102,6 +109,7 @@ def checkout(request):
 		'form': form,
 		'cart_items': cart_items,
 		'cart_count': sum(item['quantity'] for item in cart_items),
+		'cart_total': calculate_items_amount(cart_items),
 		'payment_available': calculate_items_amount(cart_items) is not None,
 	}
 	return render(request, 'orders/checkout.html', context)
@@ -116,13 +124,17 @@ def order_success(request, order_id):
 	)
 	payment_ready = bool(
 		getattr(order, 'payment', None)
-		and order.payment_method == Order.PaymentMethod.RAZORPAY
+		and order.payment_method == Order.PaymentMethod.ONLINE
 		and calculate_order_amount(order) is not None
 		and order.payment.payment_status != Payment.Status.PAID
 		and getattr(settings, 'RAZORPAY_TEST_MODE', False)
 		and getattr(settings, 'RAZORPAY_KEY_ID', '').startswith('rzp_test_')
 	)
-	return render(request, 'orders/order_success.html', {'order': order, 'payment_ready': payment_ready})
+	return render(request, 'orders/order_success.html', {
+		'order': order,
+		'order_total': order.total_amount,
+		'payment_ready': payment_ready,
+	})
 
 
 @login_required(login_url='login')

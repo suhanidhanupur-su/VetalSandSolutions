@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -81,7 +83,7 @@ class OrderFlowTests(TestCase):
 		self.assertContains(response, 'Checkout')
 		self.assertContains(response, self.product.name)
 		self.assertContains(response, 'Cash on Delivery')
-		self.assertContains(response, 'Pay Online with Razorpay')
+		self.assertContains(response, 'Online Payment')
 
 	def test_checkout_form_validates_required_fields(self):
 		self.client.force_login(self.user)
@@ -122,14 +124,32 @@ class OrderFlowTests(TestCase):
 		self.client.force_login(self.user)
 		self._set_cart({self.product.id: 1})
 		checkout_data = self._checkout_data()
-		checkout_data['payment_method'] = Order.PaymentMethod.RAZORPAY
+		checkout_data['payment_method'] = Order.PaymentMethod.ONLINE
 
 		response = self.client.post(reverse('checkout'), checkout_data)
 
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response, 'Online payment is currently unavailable for this order because pricing has not been confirmed.')
+		self.assertContains(response, 'Online payment is currently unavailable for this order because pricing has not been configured.')
 		self.assertEqual(Order.objects.count(), 0)
 		self.assertEqual(self.client.session['cart'], {str(self.product.id): 1})
+
+	def test_priced_checkout_persists_total_and_item_price_snapshots(self):
+		self.product.price = Decimal('125.00')
+		self.product.save(update_fields=['price'])
+		self.second_product.price = Decimal('80.00')
+		self.second_product.save(update_fields=['price'])
+		self.client.force_login(self.user)
+		self._set_cart({self.product.id: 2, self.second_product.id: 1})
+
+		response = self.client.post(reverse('checkout'), self._checkout_data())
+
+		order = Order.objects.get(user=self.user)
+		self.assertRedirects(response, reverse('order_success', args=[order.id]))
+		self.assertEqual(order.total_amount, Decimal('330.00'))
+		self.assertEqual(
+			set(order.items.values_list('product_id', 'unit_price')),
+			{(self.product.id, Decimal('125.00')), (self.second_product.id, Decimal('80.00'))},
+		)
 
 	def test_inactive_product_prevents_order_creation_and_preserves_cart(self):
 		inactive_product = Product.objects.create(

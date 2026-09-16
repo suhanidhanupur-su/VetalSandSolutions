@@ -22,14 +22,15 @@
                 <div><span>Status</span><strong>{{ order.get_status_display }}</strong></div>
                 <div><span>Payment Method</span><strong>{{ order.get_payment_method_display }}</strong></div>
                 <div><span>Payment Status</span><strong>{{ order.payment.get_payment_status_display }}</strong></div>
+                {% if order_total %}<div><span>Order Total</span><strong>INR {{ order_total|floatformat:2 }}</strong></div>{% endif %}
             </div>
 
             <div class="order-item-list">
                 <h2>Ordered products</h2>
                 {% for item in order.items.all %}
                     <div class="order-line-item">
-                        <span>{{ item.product.name }}</span>
-                        <strong>Qty {{ item.quantity }}</strong>
+                        <span>{{ item.product.name }}{% if item.unit_price is not None %}<small>INR {{ item.unit_price|floatformat:2 }} each</small>{% endif %}</span>
+                        <strong>Qty {{ item.quantity }}{% if item.unit_price is not None %}<br>INR {{ item.unit_price|floatformat:2 }}{% endif %}</strong>
                     </div>
                 {% endfor %}
             </div>

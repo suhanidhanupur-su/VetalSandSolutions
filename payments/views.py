@@ -27,7 +27,7 @@ def _razorpay_client():
 @require_POST
 def create_razorpay_order(request, order_id):
 	order = get_object_or_404(Order, id=order_id, user=request.user)
-	if order.payment_method != Order.PaymentMethod.RAZORPAY:
+	if order.payment_method != Order.PaymentMethod.ONLINE:
 		return JsonResponse({'success': False, 'message': 'Online payment is not selected for this order.'}, status=400)
 	payment, _ = Payment.objects.get_or_create(order=order)
 	amount = calculate_order_amount(order)
@@ -74,7 +74,7 @@ def create_razorpay_order(request, order_id):
 @require_POST
 def verify_payment(request, order_id):
 	order = get_object_or_404(Order, id=order_id, user=request.user)
-	if order.payment_method != Order.PaymentMethod.RAZORPAY:
+	if order.payment_method != Order.PaymentMethod.ONLINE:
 		return JsonResponse({'success': False, 'message': 'Online payment is not selected for this order.'}, status=400)
 	payment = get_object_or_404(Payment, order=order)
 	payment_id = request.POST.get('razorpay_payment_id', '').strip()

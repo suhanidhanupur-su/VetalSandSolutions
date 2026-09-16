@@ -44,19 +44,19 @@
                                     <input type="radio" name="payment_method" value="cod" id="id_payment_method_cod"{% if form.payment_method.value == 'cod' or not form.payment_method.value %} checked{% endif %}>
                                     <span class="payment-method-card-content">
                                         <strong>Cash on Delivery</strong>
-                                        <small>Pay when your order is delivered</small>
+                                        <small>Pay when your order is delivered.</small>
                                     </span>
                                 </label>
-                                <label class="payment-method-card" for="id_payment_method_razorpay">
-                                    <input type="radio" name="payment_method" value="razorpay" id="id_payment_method_razorpay"{% if form.payment_method.value == 'razorpay' %} checked{% endif %}>
+                                <label class="payment-method-card" for="id_payment_method_online">
+                                    <input type="radio" name="payment_method" value="online" id="id_payment_method_online"{% if form.payment_method.value == 'online' %} checked{% endif %}>
                                     <span class="payment-method-card-content">
-                                        <strong>Pay Online with Razorpay</strong>
-                                        <small>Secure online payment</small>
+                                        <strong>Online Payment</strong>
+                                        <small>Secure payment via Razorpay.</small>
                                     </span>
                                 </label>
                             </div>
                             {% if not payment_available %}
-                                <p class="payment-method-unavailable">Online payment is currently unavailable for this order because pricing has not been confirmed. Please choose Cash on Delivery or request a quote.</p>
+                                <p class="payment-method-unavailable">Online payment is currently unavailable for this order because pricing has not been configured.</p>
                             {% endif %}
                             {% if form.payment_method.errors %}<div class="order-form-error">{{ form.payment_method.errors }}</div>{% endif %}
                         </fieldset>
@@ -86,8 +86,13 @@
                     </div>
 
                     <div class="pricing-request-box">
-                        <strong>B2B pricing available on request</strong>
-                        <p>No product prices are displayed. Our team will confirm pricing, availability and delivery details after reviewing your request.</p>
+                        {% if cart_total %}
+                            <strong>Order Total: INR {{ cart_total|floatformat:2 }}</strong>
+                            <p>Calculated from the current product prices.</p>
+                        {% else %}
+                            <strong>Pricing available on request</strong>
+                            <p>Our team will confirm pricing, availability and delivery details after reviewing your request.</p>
+                        {% endif %}
                     </div>
                 </aside>
             </div>

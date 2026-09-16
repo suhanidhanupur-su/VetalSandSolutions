@@ -16,4 +16,4 @@ def calculate_items_amount(items):
 
 
 def calculate_order_amount(order):
-    return calculate_items_amount(order.items.select_related('product').all())
+    return order.total_amount

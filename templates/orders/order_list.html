@@ -18,7 +18,7 @@
                         <div>
                             <span class="order-list-label">Order #{{ order.id }}</span>
                             <h2>{{ order.full_name }}</h2>
-                            <p>{{ order.created_at|date:'d M Y, H:i' }} · {{ order.item_count }} product{{ order.item_count|pluralize }} · {{ order.get_payment_method_display }}</p>
+                            <p>{{ order.created_at|date:'d M Y, H:i' }} · {{ order.item_count }} product{{ order.item_count|pluralize }} · {{ order.get_payment_method_display }}{% if order.total_amount %} · INR {{ order.total_amount|floatformat:2 }}{% endif %}</p>
                         </div>
                         <div class="order-list-status">
                             <span>{{ order.get_status_display }}</span>
