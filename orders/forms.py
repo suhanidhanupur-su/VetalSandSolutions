@@ -21,9 +21,9 @@ class CheckoutForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['payment_method'].required = False
+        self.fields['payment_method'].required = True
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'order-form-control')
 
     def clean_payment_method(self):
-        return self.cleaned_data.get('payment_method') or Order.PaymentMethod.COD
+        return self.cleaned_data['payment_method']

@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from products.models import Product
 from payments.models import Payment
 from payments.services import calculate_items_amount, calculate_order_amount
+from core.email_notifications import send_order_request_email
 
 from .forms import CheckoutForm
 from .models import Order, OrderItem
@@ -96,7 +97,26 @@ def checkout(request):
 					request.session['cart'] = {}
 					request.session.modified = True
 
+				send_order_request_email(order)
+
 				messages.success(request, f'Order #{order.id} has been submitted successfully.')
+				if order.payment_method == Order.PaymentMethod.ONLINE:
+					order = Order.objects.select_related('payment').prefetch_related('items__product').get(id=order.id)
+					order_total = calculate_order_amount(order)
+					payment_ready = bool(
+						order_total is not None
+						and order_total > 0
+						and getattr(settings, 'RAZORPAY_TEST_MODE', False)
+						and getattr(settings, 'RAZORPAY_KEY_ID', '').startswith('rzp_test_')
+						and getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+					)
+					return render(request, 'orders/order_success.html', {
+						'order': order,
+						'order_total': order_total,
+						'pricing_available': order_total is not None,
+						'payment_ready': payment_ready,
+						'auto_start_payment': payment_ready,
+					})
 				return redirect('order_success', order_id=order.id)
 	else:
 		form = CheckoutForm(initial={
@@ -122,17 +142,20 @@ def order_success(request, order_id):
 		id=order_id,
 		user=request.user,
 	)
+	order_total = calculate_order_amount(order)
 	payment_ready = bool(
 		getattr(order, 'payment', None)
 		and order.payment_method == Order.PaymentMethod.ONLINE
-		and calculate_order_amount(order) is not None
+		and order_total is not None
 		and order.payment.payment_status != Payment.Status.PAID
 		and getattr(settings, 'RAZORPAY_TEST_MODE', False)
 		and getattr(settings, 'RAZORPAY_KEY_ID', '').startswith('rzp_test_')
+		and getattr(settings, 'RAZORPAY_KEY_SECRET', '')
 	)
 	return render(request, 'orders/order_success.html', {
 		'order': order,
-		'order_total': order.total_amount,
+		'order_total': order_total,
+		'pricing_available': order_total is not None,
 		'payment_ready': payment_ready,
 	})
 

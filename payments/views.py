@@ -1,3 +1,5 @@
+import logging
+
 import razorpay
 from django.conf import settings
 from django.contrib import messages
@@ -11,6 +13,9 @@ from orders.models import Order
 
 from .models import Payment
 from .services import calculate_order_amount
+
+
+logger = logging.getLogger(__name__)
 
 
 def _razorpay_client():
@@ -32,7 +37,7 @@ def create_razorpay_order(request, order_id):
 	payment, _ = Payment.objects.get_or_create(order=order)
 	amount = calculate_order_amount(order)
 
-	if amount is None:
+	if amount is None or amount <= 0:
 		return JsonResponse(
 			{'success': False, 'message': 'Online payment is currently unavailable for this order. Please contact us for pricing.'},
 			status=400,
@@ -51,7 +56,8 @@ def create_razorpay_order(request, order_id):
 			'currency': settings.RAZORPAY_CURRENCY,
 			'receipt': f'order_{order.id}',
 		})
-	except Exception:
+	except Exception as exc:
+		logger.warning('Razorpay order creation failed for order_id=%s: %s', order.id, exc)
 		return JsonResponse(
 			{'success': False, 'message': 'Unable to start online payment. Please contact us.'},
 			status=502,

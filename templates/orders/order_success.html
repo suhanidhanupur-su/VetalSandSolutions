@@ -9,10 +9,15 @@
             <p class="section-kicker">Request received</p>
             <h1>Thank you, {{ order.full_name }}.</h1>
             <p class="order-confirmation-lead">Your order request has been submitted. Our team will contact you with B2B pricing and next steps.</p>
-            {% if not payment_ready %}
+            {% if not pricing_available %}
                 <div class="pricing-request-box">
                     <strong>Online payment is currently unavailable for this order.</strong>
                     <p>Please contact us for pricing. Payment details will be added after commercial pricing is confirmed.</p>
+                </div>
+            {% elif not payment_ready and order.payment_method == 'online' %}
+                <div class="pricing-request-box">
+                    <strong>Online payment is currently unavailable.</strong>
+                    <p>Razorpay Test Mode credentials are not configured.</p>
                 </div>
             {% endif %}
 
@@ -102,6 +107,9 @@
             });
             razorpay.open();
         });
+        {% if auto_start_payment %}
+            payButton.click();
+        {% endif %}
     </script>
 {% endif %}
 {% endblock %}

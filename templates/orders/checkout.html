@@ -61,8 +61,21 @@
                             {% if form.payment_method.errors %}<div class="order-form-error">{{ form.payment_method.errors }}</div>{% endif %}
                         </fieldset>
 
-                        <button type="submit" class="btn btn-primary order-submit-btn">Submit Order Request</button>
+                        <button type="submit" class="btn btn-primary order-submit-btn" id="checkout-submit-button">Place Order</button>
                     </form>
+                                    <script>
+                                        const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
+                                        const checkoutSubmitButton = document.getElementById('checkout-submit-button');
+                                        paymentMethodInputs.forEach((input) => {
+                                            input.addEventListener('change', () => {
+                                                checkoutSubmitButton.textContent = input.value === 'online' ? 'Pay Online' : 'Place Order';
+                                            });
+                                        });
+                                        const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+                                        if (selectedPaymentMethod) {
+                                            checkoutSubmitButton.textContent = selectedPaymentMethod.value === 'online' ? 'Pay Online' : 'Place Order';
+                                        }
+                                    </script>
                 </div>
             </div>
 

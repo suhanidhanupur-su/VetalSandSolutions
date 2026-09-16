@@ -16,4 +16,16 @@ def calculate_items_amount(items):
 
 
 def calculate_order_amount(order):
-    return order.total_amount
+    if order.total_amount is not None:
+        return order.total_amount
+
+    total = Decimal('0.00')
+    has_items = False
+    for item in order.items.select_related('product').all():
+        has_items = True
+        unit_price = item.unit_price if item.unit_price is not None else item.product.price
+        if unit_price is None:
+            return None
+        total += Decimal(unit_price) * Decimal(item.quantity)
+
+    return total if has_items else None
