@@ -35,6 +35,8 @@ def create_razorpay_order(request, order_id):
 	if order.payment_method != Order.PaymentMethod.ONLINE:
 		return JsonResponse({'success': False, 'message': 'Online payment is not selected for this order.'}, status=400)
 	payment, _ = Payment.objects.get_or_create(order=order)
+	if payment.payment_status == Payment.Status.PAID:
+		return JsonResponse({'success': False, 'message': 'This order has already been paid.'}, status=400)
 	amount = calculate_order_amount(order)
 
 	if amount is None or amount <= 0:
@@ -63,7 +65,15 @@ def create_razorpay_order(request, order_id):
 			status=502,
 		)
 
-	payment.payment_id = razorpay_order['id']
+	order_id = razorpay_order.get('id')
+	if not order_id:
+		logger.warning('Razorpay order creation returned no order id for order_id=%s', order.id)
+		return JsonResponse(
+			{'success': False, 'message': 'Unable to start online payment. Please contact us.'},
+			status=502,
+		)
+
+	payment.payment_id = order_id
 	payment.payment_status = Payment.Status.CREATED
 	payment.amount = amount
 	payment.save(update_fields=['payment_id', 'payment_status', 'amount', 'updated_at'])
@@ -83,6 +93,8 @@ def verify_payment(request, order_id):
 	if order.payment_method != Order.PaymentMethod.ONLINE:
 		return JsonResponse({'success': False, 'message': 'Online payment is not selected for this order.'}, status=400)
 	payment = get_object_or_404(Payment, order=order)
+	if payment.payment_status == Payment.Status.PAID:
+		return JsonResponse({'success': False, 'message': 'This order has already been paid.'}, status=400)
 	payment_id = request.POST.get('razorpay_payment_id', '').strip()
 	razorpay_order_id = request.POST.get('razorpay_order_id', '').strip()
 	signature = request.POST.get('razorpay_signature', '').strip()
@@ -126,6 +138,8 @@ def verify_payment(request, order_id):
 @require_POST
 def payment_failed(request, order_id):
 	order = get_object_or_404(Order, id=order_id, user=request.user)
-	Payment.objects.filter(order=order).update(payment_status=Payment.Status.FAILED)
+	Payment.objects.filter(
+		order=order,
+	).exclude(payment_status=Payment.Status.PAID).update(payment_status=Payment.Status.FAILED)
 	messages.error(request, 'Payment was not completed. Your order remains pending.')
 	return redirect('order_success', order_id=order.id)

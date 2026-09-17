@@ -3,12 +3,14 @@ from django.shortcuts import redirect, render
 
 from enquiries.forms import ContactEnquiryForm, QuoteRequestForm
 from enquiries.models import ContactEnquiry, QuoteRequest
+from products.models import Product
 
 from .email_notifications import send_contact_enquiry_emails, send_quote_request_emails
 
 
 def home(request):
-    return render(request, 'core/home.html')
+    products = Product.objects.filter(is_active=True).select_related('category')[:5]
+    return render(request, 'core/home.html', {'home_products': products})
 
 
 def about(request):

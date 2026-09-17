@@ -8,12 +8,13 @@ def _get_cart(request):
     return request.session.get('cart', {})
 
 
+@require_POST
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id, is_active=True)
     cart = _get_cart(request)
 
     try:
-        quantity = int(request.POST.get('quantity', request.GET.get('quantity', 1)))
+        quantity = int(request.POST.get('quantity', 1))
     except (TypeError, ValueError):
         quantity = 1
 
@@ -74,6 +75,12 @@ def remove_from_cart(request, product_id):
 @require_POST
 def update_cart(request, product_id):
     cart = _get_cart(request)
+
+    if not Product.objects.filter(id=product_id, is_active=True).exists():
+        cart.pop(str(product_id), None)
+        request.session['cart'] = cart
+        request.session.modified = True
+        return redirect('cart_detail')
 
     try:
         quantity = int(request.POST.get('quantity', 0))

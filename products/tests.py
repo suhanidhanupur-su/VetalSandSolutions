@@ -107,7 +107,7 @@ class WishlistTests(TestCase):
 		self.client.force_login(self.user)
 		self.client.post(reverse('add_to_wishlist', args=[self.product.id]))
 
-		cart_response = self.client.get(reverse('add_to_cart', args=[self.product.id]))
+		cart_response = self.client.post(reverse('add_to_cart', args=[self.product.id]))
 
 		self.assertEqual(cart_response.status_code, 302)
 		self.assertEqual(self.client.session['cart'][str(self.product.id)], 1)

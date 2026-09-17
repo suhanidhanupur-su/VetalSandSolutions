@@ -42,7 +42,10 @@
 
                                     <div class="wishlist-card-actions">
                                         <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary product-btn">View Product</a>
-                                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-secondary product-btn">Add to Cart</a>
+                                        <form method="post" action="{% url 'add_to_cart' product.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-secondary product-btn">Add to Cart</button>
+                                        </form>
                                         <form method="post" action="{% url 'remove_from_wishlist' product.id %}">
                                             {% csrf_token %}
                                             <button type="submit" class="wishlist-remove-button">Remove from Wishlist</button>
