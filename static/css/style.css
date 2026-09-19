@@ -69,6 +69,64 @@ select {
     font-family: 'Inter', sans-serif;
 }
 
+/* Accessibility utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Global form control defaults — styles Django-rendered form inputs that have no class */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(155, 61, 32, 0.2);
+    border-radius: 0.75rem;
+    background: rgba(247, 241, 232, 0.72);
+    color: var(--dark);
+    font-size: 0.95rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(155, 61, 32, 0.12);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+textarea {
+    min-height: 8rem;
+    resize: vertical;
+}
+
+.text-danger {
+    color: #a52b20 !important;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -445,6 +503,12 @@ select {
     border-radius: 0.9rem;
 }
 
+/* Scrolled navbar depth */
+.premium-navbar.scrolled {
+    box-shadow: 0 14px 36px rgba(33, 27, 24, 0.14);
+    border-bottom-color: rgba(198, 154, 90, 0.44);
+}
+
 .hero-section {
     position: relative;
     min-height: clamp(42.5rem, 78vh, 47.5rem);
@@ -697,6 +761,11 @@ select {
 
 .products-page {
     background: linear-gradient(180deg, rgba(247, 241, 232, 0.98) 0%, rgba(252, 250, 246, 1) 100%);
+    min-height: 70vh;
+}
+
+.products-section {
+    padding: 3rem 0 5rem;
 }
 
 .products-hero {
@@ -1332,102 +1401,135 @@ select {
     }
 }
 
-/* Auth System Styling */
-.auth-hero {
-    background: linear-gradient(135deg, rgba(24, 57, 36, 0.96), rgba(19, 31, 25, 0.98));
-    color: #fff;
-}
-
+/* Auth System Styling — brand-consistent brown/cream/gold palette */
 .auth-section {
-    padding: 50px 0;
-    background: #eef3ee;
+    padding: 4rem 0 5rem;
+    background: linear-gradient(180deg, var(--off-white), var(--cream));
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
 }
 
 .auth-card,
 .account-dashboard {
     background: #fff;
-    border: 1px solid rgba(38, 65, 41, 0.12);
-    box-shadow: 0 18px 44px rgba(34, 62, 37, 0.1);
-    border-radius: 16px;
-    padding: 30px;
+    border: 1px solid rgba(232, 216, 197, 0.95);
+    box-shadow: 0 22px 50px rgba(33, 27, 24, 0.1);
+    border-radius: 1.4rem;
+    padding: 2rem 2.5rem;
 }
 
 .auth-card-header {
-    border-bottom: 1px solid rgba(38, 65, 41, 0.12);
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(198, 154, 90, 0.25);
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
 }
 
 .auth-card-header h3,
 .account-summary h3 {
-    color: #18391f;
-    font-weight: 800;
-    margin-bottom: 6px;
+    color: var(--dark);
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    font-size: 1.85rem;
 }
 
 .auth-card-subtitle {
-    color: #607166;
-    font-size: 0.92rem;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+}
+
+.auth-card-subtitle a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.auth-card-subtitle a:hover {
+    color: var(--dark);
+}
+
+.auth-card .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .auth-card form input,
 .auth-card form select,
 .auth-card form textarea {
     width: 100%;
-    padding: 11px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(38, 65, 41, 0.2);
-    background: #fff;
+    padding: 0.8rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(155, 61, 32, 0.2);
+    background: rgba(247, 241, 232, 0.8);
+    color: var(--dark);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
 }
 
 .auth-card form input:focus,
 .auth-card form select:focus,
 .auth-card form textarea:focus {
-    border-color: #b8812a;
-    box-shadow: 0 0 0 4px rgba(184, 129, 42, 0.12);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(155, 61, 32, 0.12);
     outline: none;
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .account-summary {
     display: flex;
     justify-content: space-between;
-    gap: 30px;
+    gap: 2rem;
     align-items: center;
-    border-bottom: 1px solid rgba(38, 65, 41, 0.12);
-    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(198, 154, 90, 0.25);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .account-summary .section-kicker {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     letter-spacing: 0.14em;
-    color: #b8812a;
+    color: var(--gold);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.account-summary h3 {
+    font-size: 1.55rem;
 }
 
 .account-links {
     display: flex;
-    gap: 16px;
+    gap: 0.8rem;
     flex-wrap: wrap;
-    padding: 24px 0;
+    padding: 1.5rem 0;
 }
 
 .account-link {
-    background: #18391f;
+    background: var(--primary);
     color: #fff;
-    padding: 12px 20px;
-    border-radius: 50px;
+    padding: 0.75rem 1.4rem;
+    border-radius: 999px;
     text-decoration: none;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.88rem;
+    transition: background-color 0.25s ease, transform 0.25s ease;
 }
 
-.account-link:hover {
+.account-link:hover,
+.account-link:focus-visible {
     color: #fff;
-    background: #b8812a;
+    background: var(--dark);
+    transform: translateY(-1px);
 }
 
 .account-actions {
-    padding-top: 16px;
-    border-top: 1px solid rgba(38, 65, 41, 0.12);
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(198, 154, 90, 0.25);
 }
 
 .profile-section {
