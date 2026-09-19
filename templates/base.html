@@ -19,6 +19,9 @@
     {% include 'core/navbar.html' %}
 
     <main>
+        {% if request.resolver_match.url_name != 'home' %}
+            {% include 'core/inner_page_banner.html' %}
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 

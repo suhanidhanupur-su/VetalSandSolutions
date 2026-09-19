@@ -8,7 +8,7 @@
         <div class="orders-page-heading order-detail-heading">
             <div>
                 <p class="section-kicker">Order details</p>
-                <h1>Order #{{ order.id }}</h1>
+                <h2>Order #{{ order.id }}</h2>
                 <p>Submitted {{ order.created_at|date:'d M Y, H:i' }}</p>
             </div>
             <span class="order-status-pill">{{ order.get_status_display }}</span>

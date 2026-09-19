@@ -1,0 +1,50 @@
+<section class="inner-page-banner" aria-labelledby="inner-page-banner-title">
+    <div class="inner-page-banner-glow" aria-hidden="true"></div>
+    <div class="container inner-page-banner-content">
+        <p class="inner-page-banner-eyebrow">VETAL SAND SOLUTIONS</p>
+        <h1 id="inner-page-banner-title">
+            {% if request.resolver_match.url_name == 'product_detail' %}{{ product.name }}
+            {% elif request.resolver_match.url_name == 'about' %}About Us
+            {% elif request.resolver_match.url_name == 'product_list' %}Our Products
+            {% elif request.resolver_match.url_name == 'industries' %}Industries We Serve
+            {% elif request.resolver_match.url_name == 'applications' %}Silica Sand Applications
+            {% elif request.resolver_match.url_name == 'portfolio' %}Company Profile
+            {% elif request.resolver_match.url_name == 'gallery' %}Gallery
+            {% elif request.resolver_match.url_name == 'contact' %}Contact Us
+            {% elif request.resolver_match.url_name == 'quote' %}Request a Quote
+            {% elif request.resolver_match.url_name == 'cart_detail' %}Shopping Cart
+            {% elif request.resolver_match.url_name == 'checkout' %}Checkout
+            {% elif request.resolver_match.url_name == 'account' %}My Account
+            {% elif request.resolver_match.url_name == 'login' %}Login to Your Account
+            {% elif request.resolver_match.url_name == 'register' %}Create Your Account
+            {% elif request.resolver_match.url_name == 'edit_profile' %}My Profile
+            {% elif request.resolver_match.url_name == 'order_list' %}My Orders
+            {% elif request.resolver_match.url_name == 'order_detail' %}Order Details
+            {% elif request.resolver_match.url_name == 'order_success' %}Order Submitted
+            {% elif request.resolver_match.url_name == 'wishlist_detail' %}Your Wishlist
+            {% else %}Vetal Sand Solutions{% endif %}
+        </h1>
+        <p class="inner-page-banner-subtitle">
+            {% if request.resolver_match.url_name == 'about' %}Premium quality silica sand solutions for demanding industrial applications.
+            {% elif request.resolver_match.url_name == 'product_list' %}Premium silica sand solutions for industrial applications.
+            {% elif request.resolver_match.url_name == 'product_detail' %}Explore product details and suitability for your industrial requirements.
+            {% elif request.resolver_match.url_name == 'industries' %}Material solutions for a range of industrial sectors.
+            {% elif request.resolver_match.url_name == 'applications' %}Material suitability and process compatibility across industrial applications.
+            {% elif request.resolver_match.url_name == 'portfolio' %}Dependable silica sand supply and industrial material support.
+            {% elif request.resolver_match.url_name == 'gallery' %}A visual look at our products, materials and industrial solutions.
+            {% elif request.resolver_match.url_name == 'contact' %}Connect with our team about your silica sand requirements.
+            {% elif request.resolver_match.url_name == 'quote' %}Tell us what silica sand solution you need.
+            {% elif request.resolver_match.url_name == 'cart_detail' %}Review your selected silica sand products.
+            {% elif request.resolver_match.url_name == 'checkout' %}Share your delivery details and order requirements.
+            {% elif request.resolver_match.url_name == 'account' %}Manage your industrial product preferences.
+            {% elif request.resolver_match.url_name == 'login' %}Manage your industrial sourcing requests and account details.
+            {% elif request.resolver_match.url_name == 'register' %}Access product requests and industrial sourcing support.
+            {% elif request.resolver_match.url_name == 'edit_profile' %}Manage your profile information.
+            {% elif request.resolver_match.url_name == 'order_list' %}Review your submitted product requests and current status.
+            {% elif request.resolver_match.url_name == 'order_detail' %}Review the details of your submitted order.
+            {% elif request.resolver_match.url_name == 'order_success' %}Your order request has been submitted successfully.
+            {% elif request.resolver_match.url_name == 'wishlist_detail' %}Keep the silica sand products you are considering close at hand.
+            {% endif %}
+        </p>
+    </div>
+</section>
