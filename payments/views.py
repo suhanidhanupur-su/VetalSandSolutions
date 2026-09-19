@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 
 from orders.models import Order
+from core.email_notifications import send_payment_confirmation_email
 
 from .models import Payment
 from .services import calculate_order_amount
@@ -125,11 +126,16 @@ def verify_payment(request, order_id):
 		return JsonResponse({'success': False, 'message': 'Payment verification failed.'}, status=400)
 
 	with transaction.atomic():
-		payment.payment_id = payment_id
-		payment.payment_status = Payment.Status.PAID
-		payment.save(update_fields=['payment_id', 'payment_status', 'updated_at'])
+		locked_payment = Payment.objects.select_for_update().select_related('order').get(pk=payment.pk)
+		if locked_payment.payment_status == Payment.Status.PAID:
+			return JsonResponse({'success': True, 'redirect_url': f'/orders/{order.id}/success/'})
+		locked_payment.payment_id = payment_id
+		locked_payment.payment_status = Payment.Status.PAID
+		locked_payment.save(update_fields=['payment_id', 'payment_status', 'updated_at'])
 		order.status = Order.Status.CONFIRMED
 		order.save(update_fields=['status', 'updated_at'])
+
+	send_payment_confirmation_email(order)
 
 	return JsonResponse({'success': True, 'redirect_url': f'/orders/{order.id}/success/'})
 

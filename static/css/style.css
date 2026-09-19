@@ -1981,6 +1981,8 @@ select {
 
 .gallery-category {
     display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
     margin-bottom: 0.8rem;
     color: var(--primary);
     font-weight: 800;

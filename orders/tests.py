@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from products.models import Category, Product
@@ -55,6 +55,7 @@ class OrderFlowTests(TestCase):
 			'state': 'Maharashtra',
 			'pincode': '411001',
 			'notes': 'Please share B2B pricing details.',
+			'payment_method': Order.PaymentMethod.COD,
 		}
 
 	def test_logged_out_checkout_redirects_to_login_with_next(self):
@@ -96,6 +97,10 @@ class OrderFlowTests(TestCase):
 		self.assertEqual(Order.objects.count(), 0)
 		self.assertEqual(self.client.session['cart'], {str(self.product.id): 2})
 
+	@override_settings(
+		EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+		DEFAULT_FROM_EMAIL='no-reply@example.com',
+	)
 	def test_successful_checkout_creates_order_items_and_clears_cart(self):
 		self.client.force_login(self.user)
 		self._set_cart({self.product.id: 2, self.second_product.id: 1})
@@ -113,6 +118,9 @@ class OrderFlowTests(TestCase):
 		)
 		self.assertEqual(self.client.session['cart'], {})
 		self.assertTrue(Payment.objects.filter(order=order, payment_status=Payment.Status.PENDING).exists())
+		from django.core import mail
+		self.assertEqual(len(mail.outbox), 1)
+		self.assertEqual(mail.outbox[0].to, ['customer@example.com'])
 
 		success_response = self.client.get(reverse('order_success', args=[order.id]))
 		self.assertContains(success_response, f'#{order.id}')

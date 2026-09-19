@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from orders.models import Order
 from orders.models import OrderItem
@@ -130,6 +130,10 @@ class PaymentModelTests(TestCase):
 		self.assertEqual(Payment.objects.get(order=self.order).payment_status, Payment.Status.FAILED)
 
 	@patch('payments.views._razorpay_client')
+	@override_settings(
+		EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+		DEFAULT_FROM_EMAIL='no-reply@example.com',
+	)
 	def test_valid_signature_marks_payment_paid_and_confirms_order(self, client_factory):
 		self.order.payment_method = Order.PaymentMethod.ONLINE
 		self.order.save(update_fields=['payment_method'])
@@ -154,3 +158,17 @@ class PaymentModelTests(TestCase):
 		self.assertEqual(payment.payment_id, 'pay_test_123')
 		self.assertEqual(payment.payment_status, Payment.Status.PAID)
 		self.assertEqual(self.order.status, Order.Status.CONFIRMED)
+		from django.core import mail
+		self.assertEqual(len(mail.outbox), 1)
+		self.assertEqual(mail.outbox[0].to, ['payment@example.com'])
+
+		second_response = self.client.post(
+			f'/orders/{self.order.id}/razorpay/verify/',
+			{
+				'razorpay_payment_id': 'pay_test_123',
+				'razorpay_order_id': payment.payment_id,
+				'razorpay_signature': 'signature',
+			},
+		)
+		self.assertEqual(second_response.status_code, 400)
+		self.assertEqual(len(mail.outbox), 1)

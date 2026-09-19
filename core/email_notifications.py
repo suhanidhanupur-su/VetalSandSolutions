@@ -9,7 +9,19 @@ logger = logging.getLogger(__name__)
 def _send_email(subject, message, recipient):
     if not recipient:
         logger.warning('Email notification skipped because no recipient was configured.')
-        return
+        return False
+
+    email_backend = getattr(settings, 'EMAIL_BACKEND', '')
+    smtp_configured = all(
+        getattr(settings, setting_name, '')
+        for setting_name in ('EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_HOST_PASSWORD', 'DEFAULT_FROM_EMAIL')
+    )
+    test_backend = email_backend == 'django.core.mail.backends.locmem.EmailBackend'
+    if not test_backend and (
+        email_backend != 'django.core.mail.backends.smtp.EmailBackend' or not smtp_configured
+    ):
+        logger.warning('Email notification skipped because SMTP is not fully configured.')
+        return False
 
     try:
         send_mail(
@@ -21,6 +33,8 @@ def _send_email(subject, message, recipient):
         )
     except Exception:
         logger.exception('Email notification failed for recipient %s.', recipient)
+        return False
+    return True
 
 
 def send_order_request_email(order):
@@ -37,6 +51,21 @@ def send_order_request_email(order):
     )
     _send_email(
         'Vetal Sand Solutions - Order Request Received',
+        message,
+        order.email,
+    )
+
+
+def send_payment_confirmation_email(order):
+    message = (
+        f'Order Number: #{order.id}\n'
+        f'Customer Name: {order.full_name}\n'
+        f'Payment Method: {order.get_payment_method_display()}\n'
+        f'Payment Status: Payment received\n'
+        f'Total Amount: {order.total_amount or "-"}\n'
+    )
+    return _send_email(
+        'Vetal Sand Solutions - Payment Confirmation',
         message,
         order.email,
     )

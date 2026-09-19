@@ -5,7 +5,10 @@ from decimal import Decimal
 from django.contrib import admin
 from django.test import TestCase
 
-from .models import Category, Product
+from cloudinary.models import CloudinaryField
+
+from .admin import ProductImageInline
+from .models import Category, Product, ProductImage
 
 
 class ProductPriceTests(TestCase):
@@ -35,6 +38,31 @@ class ProductPriceTests(TestCase):
 		)
 
 		self.assertEqual(product.price, Decimal('1250.00'))
+
+
+class ProductImageIntegrationTests(TestCase):
+	def setUp(self):
+		self.category = Category.objects.create(name='Industrial', slug='industrial')
+		self.product = Product.objects.create(
+			category=self.category,
+			name='Foundry Sand',
+			slug='foundry-sand',
+			is_active=True,
+		)
+
+	def test_product_image_uses_cloudinary_field_and_admin_inline(self):
+		self.assertIsInstance(ProductImage._meta.get_field('image'), CloudinaryField)
+		self.assertIs(ProductImageInline.model, ProductImage)
+		self.assertIn(ProductImageInline, admin.site._registry[Product].inlines)
+
+	def test_product_pages_show_placeholders_when_images_are_missing(self):
+		list_response = self.client.get(reverse('product_list'))
+		detail_response = self.client.get(reverse('product_detail', args=[self.product.slug]))
+		home_response = self.client.get(reverse('home'))
+
+		self.assertContains(list_response, 'No product image available')
+		self.assertContains(detail_response, 'No product image available')
+		self.assertContains(home_response, 'home-product-mark')
 
 from .models import Category, Product, Wishlist
 
