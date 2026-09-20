@@ -141,17 +141,22 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+_cloudinary_placeholders = {'', 'value', 'your-cloud-name', 'your-api-key', 'your-api-secret'}
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip(),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '').strip(),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '').strip(),
 }
-CLOUDINARY_CONFIGURED = all(CLOUDINARY_STORAGE.values())
-cloudinary.config(
-    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
-    api_key=CLOUDINARY_STORAGE['API_KEY'],
-    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+CLOUDINARY_CONFIGURED = all(
+    value and value.lower() not in _cloudinary_placeholders
+    for value in CLOUDINARY_STORAGE.values()
 )
+if CLOUDINARY_CONFIGURED:
+    cloudinary.config(
+        cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+        api_key=CLOUDINARY_STORAGE['API_KEY'],
+        api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+    )
 
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
 RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
