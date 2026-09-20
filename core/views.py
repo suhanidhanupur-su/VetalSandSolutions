@@ -11,7 +11,14 @@ from .models import GalleryImage
 
 def home(request):
     products = Product.objects.filter(is_active=True).select_related('category')[:5]
-    return render(request, 'core/home.html', {'home_products': products})
+    focus_gallery_image = GalleryImage.objects.filter(
+        is_active=True,
+        category__iexact='Work in Focus',
+    ).first()
+    return render(request, 'core/home.html', {
+        'home_products': products,
+        'focus_gallery_image': focus_gallery_image,
+    })
 
 
 def about(request):

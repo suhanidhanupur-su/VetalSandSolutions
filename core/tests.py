@@ -15,6 +15,17 @@ class CorePageViewsTests(TestCase):
         self.assertContains(response, 'Request a Quote')
         self.assertContains(response, 'Home')
 
+    def test_home_page_shows_work_in_focus_gallery_image(self):
+        GalleryImage.objects.create(
+            title='Foundry casting process',
+            category='Work in Focus',
+        )
+
+        response = self.client.get(reverse('home'))
+
+        self.assertContains(response, 'vs-focus-grid')
+        self.assertContains(response, 'Our work in focus')
+
     def test_about_page_loads(self):
         response = self.client.get(reverse('about'))
         self.assertEqual(response.status_code, 200)
