@@ -1,124 +1,88 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Vetal Sand Solutions | Industrial Silica Sand{% endblock %}
+
 {% block content %}
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center g-4 g-lg-5">
-            <div class="col-12 col-lg-10">
-                <div class="hero-content">
-                    <p class="hero-eyebrow">PREMIUM SILICA SAND SOLUTIONS</p>
-                    <h1 class="hero-title">PURE BY NATURE. PERFECT FOR INDUSTRY.</h1>
-                    <p class="hero-text">High-quality silica sand solutions designed for consistent performance across demanding industrial applications.</p>
-                    <div class="hero-actions">
-                        <a href="{% url 'product_list' %}" class="btn btn-primary hero-btn">Explore Products</a>
-                        <a href="{% url 'quote' %}" class="btn btn-secondary hero-btn">Request a Quote</a>
-                    </div>
-                </div>
+<section class="vs-hero">
+    <div class="vs-hero-media" aria-hidden="true"></div>
+    <div class="container vs-hero-inner">
+        <div class="vs-hero-copy">
+            <p class="vs-kicker">Premium silica sand supplier</p>
+            <h1>Pure. Natural.<br><em>Reliable.</em></h1>
+            <p class="vs-hero-lead">Silica sand solutions for industrial requirements, selected with material quality, consistency, and dependable supply in mind.</p>
+            <div class="vs-actions">
+                <a href="{% url 'product_list' %}" class="btn btn-primary">Explore Our Products <span aria-hidden="true">&#8594;</span></a>
+                <a href="{% url 'quote' %}" class="btn btn-light-outline">Request a Quote <span aria-hidden="true">&#8594;</span></a>
+            </div>
+            <div class="vs-trust-list">
+                <span><i aria-hidden="true">01</i> Premium Quality</span>
+                <span><i aria-hidden="true">02</i> Reliable Supply</span>
+                <span><i aria-hidden="true">03</i> Consistent Material</span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="home-value-strip" aria-label="Vetal Sand Solutions values">
+<section class="vs-about section-space">
     <div class="container">
-        <div class="home-value-grid">
-            <div><span>01</span><h2>Quality</h2><p>Material suitability for industrial requirements.</p></div>
-            <div><span>02</span><h2>Consistency</h2><p>Dependable characteristics for considered applications.</p></div>
-            <div><span>03</span><h2>Reliability</h2><p>Practical support for ongoing business needs.</p></div>
-        </div>
-    </div>
-</section>
-
-<section class="home-section home-about-section">
-    <div class="container">
-        <div class="row align-items-center g-4 g-lg-5">
-            <div class="col-12 col-lg-5">
-                <div class="home-about-image">
-                    <img src="{% static 'images/silica-sand.jpeg' %}" alt="Silica sand material">
-                </div>
+        <div class="vs-about-grid">
+            <div class="vs-image-frame"><img src="{% static 'images/silica-sand.jpeg' %}" alt="Silica sand material"></div>
+            <div class="vs-about-copy">
+                <p class="vs-kicker">About Vetal Sand Solutions</p>
+                <h2>Your trusted partner in silica sand supply.</h2>
+                <p>Vetal Sand Solutions supports industrial customers with silica sand products and practical sourcing support for applications where material suitability, consistency, and dependable availability matter.</p>
+                <a href="{% url 'about' %}" class="vs-arrow-link">Learn More <span aria-hidden="true">&#8594;</span></a>
             </div>
-            <div class="col-12 col-lg-7">
-                <span class="home-eyebrow">About Vetal</span>
-                <h2 class="home-section-title">Silica Sand Solutions Built Around Quality.</h2>
-                <p class="home-section-copy">Vetal Sand Solutions is focused on supplying silica sand for industrial applications where material quality, consistency, and dependable supply matter.</p>
-                <div class="home-principles" aria-label="Quality, Consistency, Reliability"><span>Quality</span><i></i><span>Consistency</span><i></i><span>Reliability</span></div>
-                <a href="{% url 'about' %}" class="home-text-link">Learn More <span aria-hidden="true">&#8594;</span></a>
+            <div class="vs-feature-list">
+                <div><span class="vs-feature-icon" aria-hidden="true">&#10022;</span><div><h3>Premium Grade Quality</h3><p>Material focus for considered industrial requirements.</p></div></div>
+                <div><span class="vs-feature-icon" aria-hidden="true">&#9671;</span><div><h3>Wide Industry Applications</h3><p>Support across varied production environments.</p></div></div>
+                <div><span class="vs-feature-icon" aria-hidden="true">&#8599;</span><div><h3>Dedicated Support</h3><p>Practical help with product and sourcing decisions.</p></div></div>
+                <div><span class="vs-feature-icon" aria-hidden="true">&#8644;</span><div><h3>Reliable Supply</h3><p>Dependable coordination for ongoing needs.</p></div></div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="home-section home-products-section">
+<section class="vs-products section-space">
     <div class="container">
-        <div class="home-section-heading">
-            <div><span class="home-eyebrow">Our products</span><h2 class="home-section-title">Industrial Silica Sand Grades</h2></div>
-            <a href="{% url 'product_list' %}" class="home-text-link d-none d-md-inline-flex">View All Products <span aria-hidden="true">&#8594;</span></a>
-        </div>
-        <div class="home-product-grid">
+        <div class="vs-section-head"><div><p class="vs-kicker">Our products</p><h2>Premium silica sand grades</h2></div><a href="{% url 'product_list' %}" class="vs-arrow-link">View All Products <span aria-hidden="true">&#8594;</span></a></div>
+        <div class="vs-product-grid">
             {% for product in home_products %}
-                <a href="{% url 'product_detail' product.slug %}" class="home-product-card">
-                    <div class="home-product-visual">
-                        <span class="home-product-number">0{{ forloop.counter }}</span>
-                        {% with image=product.images.first %}
-                            {% if image %}<img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="home-product-image">{% else %}<span class="home-product-mark">VS</span>{% endif %}
-                        {% endwith %}
+                <article class="vs-product-card">
+                    <a href="{% url 'product_detail' product.slug %}" class="vs-product-image">
+                        {% with image=product.images.first %}{% if image %}<img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}">{% else %}<img src="{% static 'images/silica-sand.jpeg' %}" alt="Silica sand material">{% endif %}{% endwith %}
+                        <span class="vs-product-index">0{{ forloop.counter }}</span>
+                    </a>
+                    <div class="vs-product-body">
+                        <p class="vs-product-meta">{{ product.category.name }}{% if product.grade %} <span>/ {{ product.grade }}</span>{% endif %}</p>
+                        <h3><a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a></h3>
+                        <p class="vs-product-description">{{ product.short_description|default:product.description|striptags|truncatechars:110 }}</p>
+                        {% if product.price is not None %}<p class="vs-product-price">INR {{ product.price|floatformat:2 }}</p>{% endif %}
+                        <div class="vs-product-actions"><a href="{% url 'product_detail' product.slug %}" class="vs-arrow-link">View Details <span aria-hidden="true">&#8594;</span></a><form method="post" action="{% url 'add_to_cart' product.id %}"><input type="hidden" name="quantity" value="1">{% csrf_token %}<button type="submit" aria-label="Add {{ product.name }} to cart" title="Add to cart">&#43;</button></form></div>
                     </div>
-                    <div class="home-product-content">
-                        <span class="home-product-label">{{ product.category.name }}</span>
-                        <h3>{{ product.grade|default:product.name }}</h3>
-                        {% if product.short_description %}<p>{{ product.short_description }}</p>{% endif %}
-                        <span class="home-card-link">View Product <span aria-hidden="true">&#8594;</span></span>
-                    </div>
-                </a>
-            {% empty %}<p class="home-empty-state">Product grades will be available here as they are added.</p>{% endfor %}
+                </article>
+            {% empty %}<p class="vs-empty">Product grades will be available here as they are added.</p>{% endfor %}
         </div>
-        <a href="{% url 'product_list' %}" class="home-text-link d-md-none mt-4">View All Products <span aria-hidden="true">&#8594;</span></a>
     </div>
 </section>
 
-<section class="home-section home-industries-section">
+<section class="vs-industries section-space">
     <div class="container">
-        <div class="home-section-heading">
-            <div><span class="home-eyebrow">Industries we serve</span><h2 class="home-section-title">Industries We Serve</h2></div>
-            <a href="{% url 'industries' %}" class="home-text-link d-none d-md-inline-flex">Explore Industries <span aria-hidden="true">&#8594;</span></a>
-        </div>
-        <div class="home-industry-grid">
-            <article class="home-industry-card"><span>01</span><h3>Foundries &amp; Castings</h3><p>Material support aligned with metal casting and sand-based industrial processes.</p></article>
-            <article class="home-industry-card"><span>02</span><h3>Glass Manufacturing</h3><p>Silica sand considerations for glass-producing applications and process requirements.</p></article>
-            <article class="home-industry-card"><span>03</span><h3>Construction &amp; Masonry</h3><p>Sand products suited to construction-oriented uses and masonry applications.</p></article>
-            <article class="home-industry-card"><span>04</span><h3>Water Filtration</h3><p>Material support for filtration systems that rely on carefully selected granular media.</p></article>
-            <article class="home-industry-card"><span>05</span><h3>Ceramics</h3><p>Supply considerations for ceramic applications requiring material consistency and suitability.</p></article>
-        </div>
-        <a href="{% url 'industries' %}" class="home-text-link d-md-none mt-4">Explore Industries <span aria-hidden="true">&#8594;</span></a>
-    </div>
-</section>
-
-<section class="home-section home-why-section">
-    <div class="container">
-        <div class="home-section-heading"><div><span class="home-eyebrow">Why Vetal</span><h2 class="home-section-title">Practical supply support for industrial needs.</h2></div></div>
-        <div class="home-why-grid">
-            <article class="home-why-card"><span>01 / CORE PRINCIPLE</span><h3>Quality</h3><p>We focus on material suitability and industrial relevance for demanding applications.</p></article>
-            <article class="home-why-card"><span>02 / CORE PRINCIPLE</span><h3>Consistency</h3><p>Reliable supply expectations help support smoother operational planning and material availability.</p></article>
-            <article class="home-why-card"><span>03 / CORE PRINCIPLE</span><h3>Reliability</h3><p>Our emphasis is on dependable service and practical support for industrial sand requirements.</p></article>
+        <div class="vs-section-head"><div><p class="vs-kicker">Where we serve</p><h2>Supporting diverse industries</h2></div><a href="{% url 'industries' %}" class="vs-arrow-link">Explore Industries <span aria-hidden="true">&#8594;</span></a></div>
+        <div class="vs-industry-grid">
+            <article><span>01</span><h3>Foundries &amp; Castings</h3><p>Material support aligned with metal casting requirements.</p></article>
+            <article><span>02</span><h3>Glass Manufacturing</h3><p>Silica sand support for glass operations.</p></article>
+            <article><span>03</span><h3>Construction &amp; Masonry</h3><p>Sand solutions for practical construction needs.</p></article>
+            <article><span>04</span><h3>Water Filtration</h3><p>Granular support for filtration-related applications.</p></article>
+            <article><span>05</span><h3>Ceramics</h3><p>Resource support for ceramic industry requirements.</p></article>
         </div>
     </div>
 </section>
 
-<section class="home-approach-section">
-    <div class="container">
-        <div class="row align-items-center g-4 g-lg-5">
-            <div class="col-12 col-lg-5"><span class="home-eyebrow">Our approach</span><h2 class="home-section-title">Material choices grounded in the needs of your process.</h2></div>
-            <div class="col-12 col-lg-7">
-                <div class="home-approach-list">
-                    <div><span>01</span><h3>Consistent material</h3><p>Focused on dependable material characteristics for industrial application needs.</p></div>
-                    <div><span>02</span><h3>Reliable supply</h3><p>Built around practical coordination and dependable service for business requirements.</p></div>
-                    <div><span>03</span><h3>Industrial applications</h3><p>Supporting material selection across a range of industrial uses and processes.</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+<section class="vs-quality section-space"><div class="container"><div class="vs-quality-grid"><div><p class="vs-kicker">Why Vetal</p><h2>Quality, consistency<br>and reliability.</h2><p>We keep our focus on material suitability, dependable service, and the practical needs of industrial customers.</p></div><div class="vs-quality-points"><div><span>01</span><h3>Consistent Quality</h3><p>Material relevance for your process.</p></div><div><span>02</span><h3>Reliable Supply</h3><p>Support for ongoing requirements.</p></div><div><span>03</span><h3>Customer Focused</h3><p>Clear, practical coordination.</p></div><div><span>04</span><h3>Sustainable Practices</h3><p>Responsible attention to supply.</p></div></div></div></div></section>
 
-<section class="home-cta-section"><div class="container"><div class="home-cta-panel"><span class="home-eyebrow">Start a conversation</span><h2>Looking for the right silica sand solution?</h2><p>Tell us about your requirement and our team can help you with the next step.</p><div class="hero-actions justify-content-center"><a href="{% url 'product_list' %}" class="btn btn-primary hero-btn">Explore Products</a><a href="{% url 'quote' %}" class="btn btn-secondary hero-btn">Request a Quote</a></div></div></div></section>
+<section class="vs-cta"><div class="container"><div class="vs-cta-inner"><p class="vs-kicker">Start a conversation</p><h2>Ready to work together?</h2><p>Get in touch with us for product details, quotes or enquiries.</p><div class="vs-actions"><a href="{% url 'quote' %}" class="btn btn-primary">Request a Quote <span aria-hidden="true">&#8594;</span></a><a href="{% url 'contact' %}" class="btn btn-secondary">Contact Us <span aria-hidden="true">&#8594;</span></a></div></div></div></section>
+
+<section class="vs-focus section-space"><div class="container"><div class="vs-section-head"><div><p class="vs-kicker">A closer look</p><h2>Our work in focus</h2></div><a href="{% url 'gallery' %}" class="vs-arrow-link">View Gallery <span aria-hidden="true">&#8594;</span></a></div><div class="vs-focus-grid"><img src="{% static 'images/silica-sand.jpeg' %}" alt="Silica sand material"><img src="{% static 'images/BANNERRR.png' %}" alt="Vetal Sand Solutions industrial sand banner"><img src="{% static 'images/LOGOOO.png' %}" alt="Vetal Sand Solutions"></div></div></section>
 {% endblock %}

@@ -6,6 +6,7 @@ from enquiries.models import ContactEnquiry, QuoteRequest
 from products.models import Product
 
 from .email_notifications import send_contact_enquiry_emails, send_quote_request_emails
+from .models import GalleryImage
 
 
 def home(request):
@@ -30,7 +31,8 @@ def portfolio(request):
 
 
 def gallery(request):
-    return render(request, 'core/gallery.html')
+    gallery_images = GalleryImage.objects.filter(is_active=True)
+    return render(request, 'core/gallery.html', {'gallery_images': gallery_images})
 
 
 def contact(request):

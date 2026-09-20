@@ -4,6 +4,8 @@ from django.urls import reverse
 
 from products.models import Category, Product
 
+from .models import GalleryImage
+
 
 class CorePageViewsTests(TestCase):
     def test_home_page_loads(self):
@@ -49,14 +51,24 @@ class CorePageViewsTests(TestCase):
         response = self.client.get(reverse('gallery'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Gallery')
-        self.assertContains(response, 'A visual look at our products, materials and industrial solutions.')
-        self.assertContains(response, 'Silica Sand')
-        self.assertContains(response, 'Products &amp; Grades')
-        self.assertContains(response, 'Industrial Applications')
-        self.assertContains(response, 'Company')
-        self.assertContains(response, 'Materials &amp; Supply')
-        self.assertContains(response, 'Image coming soon')
+        self.assertContains(response, 'Product and materials overview.')
+        self.assertContains(response, 'Gallery images coming soon.')
         self.assertContains(response, 'Request a Quote')
+
+    def test_gallery_page_shows_active_images_in_display_order(self):
+        later_image = GalleryImage.objects.create(title='Second image', display_order=2)
+        earlier_image = GalleryImage.objects.create(title='First image', display_order=1)
+        GalleryImage.objects.create(title='Hidden image', is_active=False)
+
+        response = self.client.get(reverse('gallery'))
+
+        self.assertContains(response, earlier_image.title)
+        self.assertContains(response, later_image.title)
+        self.assertNotContains(response, 'Hidden image')
+        self.assertLess(
+            response.content.index(earlier_image.title.encode()),
+            response.content.index(later_image.title.encode()),
+        )
 
     @override_settings(
         EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',

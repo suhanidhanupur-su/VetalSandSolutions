@@ -11,92 +11,30 @@
                 <h2>Product and materials overview.</h2>
             </div>
 
-            <div class="gallery-grid">
-                <article class="gallery-card">
-                    <div class="gallery-image-wrap">
-                        <div class="gallery-placeholder">
-                            <span class="gallery-placeholder-inner">
-                                <span class="gallery-icon">✦</span>
-                                <span class="gallery-text">Image coming soon</span>
-                            </span>
-                        </div>
-                        <span class="gallery-overlay"></span>
-                    </div>
-                    <div class="gallery-card-body">
-                        <span class="gallery-category">Silica Sand</span>
-                        <h3>Silica Sand</h3>
-                        <p>Material supply and product support for industrial requirements.</p>
-                    </div>
-                </article>
-
-                <article class="gallery-card">
-                    <div class="gallery-image-wrap">
-                        <div class="gallery-placeholder">
-                            <span class="gallery-placeholder-inner">
-                                <span class="gallery-icon">✦</span>
-                                <span class="gallery-text">Image coming soon</span>
-                            </span>
-                        </div>
-                        <span class="gallery-overlay"></span>
-                    </div>
-                    <div class="gallery-card-body">
-                        <span class="gallery-category">Products &amp; Grades</span>
-                        <h3>Products &amp; Grades</h3>
-                        <p>Industrial grade references prepared for customer sourcing conversations.</p>
-                    </div>
-                </article>
-
-                <article class="gallery-card">
-                    <div class="gallery-image-wrap">
-                        <div class="gallery-placeholder">
-                            <span class="gallery-placeholder-inner">
-                                <span class="gallery-icon">✦</span>
-                                <span class="gallery-text">Image coming soon</span>
-                            </span>
-                        </div>
-                        <span class="gallery-overlay"></span>
-                    </div>
-                    <div class="gallery-card-body">
-                        <span class="gallery-category">Industrial Applications</span>
-                        <h3>Industrial Applications</h3>
-                        <p>Silica sand solutions across production and operational settings.</p>
-                    </div>
-                </article>
-
-                <article class="gallery-card">
-                    <div class="gallery-image-wrap">
-                        <div class="gallery-placeholder">
-                            <span class="gallery-placeholder-inner">
-                                <span class="gallery-icon">✦</span>
-                                <span class="gallery-text">Image coming soon</span>
-                            </span>
-                        </div>
-                        <span class="gallery-overlay"></span>
-                    </div>
-                    <div class="gallery-card-body">
-                        <span class="gallery-category">Company</span>
-                        <h3>Company</h3>
-                        <p>Supply-focused industrial profile and customer materials support.</p>
-                    </div>
-                </article>
-
-                <article class="gallery-card">
-                    <div class="gallery-image-wrap">
-                        <div class="gallery-placeholder">
-                            <span class="gallery-placeholder-inner">
-                                <span class="gallery-icon">✦</span>
-                                <span class="gallery-text">Image coming soon</span>
-                            </span>
-                        </div>
-                        <span class="gallery-overlay"></span>
-                    </div>
-                    <div class="gallery-card-body">
-                        <span class="gallery-category">Materials &amp; Supply</span>
-                        <h3>Materials &amp; Supply</h3>
-                        <p>Reliable silica sand supply and grade-based sourcing support.</p>
-                    </div>
-                </article>
-            </div>
+            {% if gallery_images %}
+                <div class="gallery-grid">
+                    {% for gallery_image in gallery_images %}
+                        <article class="gallery-card">
+                            <div class="gallery-image-wrap">
+                                {% if gallery_image.image %}
+                                    <img src="{{ gallery_image.image.url }}" alt="{{ gallery_image.alt_text|default:gallery_image.title }}" class="gallery-image">
+                                {% endif %}
+                                <span class="gallery-overlay"></span>
+                            </div>
+                            <div class="gallery-card-body">
+                                {% if gallery_image.category %}<span class="gallery-category">{{ gallery_image.category }}</span>{% endif %}
+                                <h3>{{ gallery_image.title }}</h3>
+                                {% if gallery_image.description %}<p>{{ gallery_image.description }}</p>{% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state text-center gallery-empty-state">
+                    <h3>Gallery images coming soon.</h3>
+                    <p>Our visual collection will be updated with product and materials imagery.</p>
+                </div>
+            {% endif %}
         </div>
     </section>
 
