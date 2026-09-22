@@ -31,11 +31,32 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in {'1', 'true', 'yes', 'on'}
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
-    if host.strip()
-]
+def _clean_host(host_str):
+    host_str = host_str.strip()
+    if host_str.startswith(('http://', 'https://')):
+        host_str = host_str.split('://', 1)[1]
+    return host_str.split('/')[0].strip()
+
+_raw_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if _raw_allowed_hosts.strip():
+    ALLOWED_HOSTS = [
+        _clean_host(host)
+        for host in _raw_allowed_hosts.split(',')
+        if _clean_host(host)
+    ]
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
+
+for _default_host in ('localhost', '127.0.0.1', 'testserver', '.vercel.app', '.now.sh'):
+    if _default_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_default_host)
+
+for _vercel_env_key in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL', 'VERCEL_BRANCH_URL'):
+    _v_host = os.environ.get(_vercel_env_key)
+    if _v_host:
+        _cleaned = _clean_host(_v_host)
+        if _cleaned and _cleaned not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_cleaned)
 
 
 # Application definition
@@ -199,13 +220,39 @@ EMAIL_BACKEND = os.environ.get(
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
-    if origin.strip()
-]
+def _clean_origin(origin_str):
+    origin_str = origin_str.strip()
+    if not origin_str:
+        return ''
+    if not origin_str.startswith(('http://', 'https://')):
+        origin_str = f'https://{origin_str}'
+    return origin_str.rstrip('/')
+
+_raw_csrf = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '')
+CSRF_TRUSTED_ORIGINS = []
+if _raw_csrf.strip():
+    for _origin in _raw_csrf.split(','):
+        _cleaned_orig = _clean_origin(_origin)
+        if _cleaned_orig and _cleaned_orig not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(_cleaned_orig)
+
+for _default_origin in ('https://*.vercel.app', 'https://*.now.sh'):
+    if _default_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_default_origin)
+
+for _vercel_env_key in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL', 'VERCEL_BRANCH_URL'):
+    _v_origin = os.environ.get(_vercel_env_key)
+    if _v_origin:
+        _cleaned_orig = _clean_origin(_v_origin)
+        if _cleaned_orig and _cleaned_orig not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(_cleaned_orig)
+
+USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = os.environ.get('DJANGO_SECURE_SSL_REDIRECT', 'False').lower() in {'1', 'true', 'yes', 'on'}
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_SECURE_HSTS_SECONDS') or '0')
+
+
+

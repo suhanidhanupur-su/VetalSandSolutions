@@ -62,7 +62,7 @@ class ProductImageIntegrationTests(TestCase):
 
 		self.assertContains(list_response, 'No product image available')
 		self.assertContains(detail_response, 'No product image available')
-		self.assertContains(home_response, 'home-product-mark')
+		self.assertContains(home_response, 'vs-product-image')
 
 from .models import Category, Product, Wishlist
 
