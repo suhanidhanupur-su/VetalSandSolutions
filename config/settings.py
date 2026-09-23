@@ -32,24 +32,34 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in {'1', 'true', 'yes', 'on'}
 
 def _clean_host(host_str):
-    host_str = host_str.strip()
-    if host_str.startswith(('http://', 'https://')):
+    if not host_str:
+        return ''
+    host_str = host_str.strip().strip('\'"')
+    if '://' in host_str:
         host_str = host_str.split('://', 1)[1]
-    return host_str.split('/')[0].strip()
+    host_str = host_str.split('/')[0].split('?')[0].split('#')[0].strip()
+    if ':' in host_str and not host_str.startswith('['):
+        host_str = host_str.split(':', 1)[0].strip()
+    return host_str.lower()
+
+_DEFAULT_ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'testserver',
+    '[::1]',
+    'vetal-sand-solutions.vercel.app',
+    '.vercel.app',
+    '.now.sh',
+]
 
 _raw_allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
-if _raw_allowed_hosts.strip():
-    ALLOWED_HOSTS = [
-        _clean_host(host)
-        for host in _raw_allowed_hosts.split(',')
-        if _clean_host(host)
-    ]
-else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
+ALLOWED_HOSTS = list(_DEFAULT_ALLOWED_HOSTS)
 
-for _default_host in ('localhost', '127.0.0.1', 'testserver', '.vercel.app', '.now.sh'):
-    if _default_host not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(_default_host)
+if _raw_allowed_hosts.strip():
+    for _host_entry in _raw_allowed_hosts.split(','):
+        _cleaned = _clean_host(_host_entry)
+        if _cleaned and _cleaned not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_cleaned)
 
 for _vercel_env_key in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL', 'VERCEL_BRANCH_URL'):
     _v_host = os.environ.get(_vercel_env_key)
@@ -221,24 +231,30 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 def _clean_origin(origin_str):
-    origin_str = origin_str.strip()
     if not origin_str:
         return ''
+    origin_str = origin_str.strip().strip('\'"')
     if not origin_str.startswith(('http://', 'https://')):
         origin_str = f'https://{origin_str}'
-    return origin_str.rstrip('/')
+    parts = origin_str.split('://', 1)
+    scheme = parts[0].lower()
+    host_part = parts[1].split('/')[0].split('?')[0].split('#')[0].strip().lower()
+    return f'{scheme}://{host_part}'
+
+_DEFAULT_CSRF_TRUSTED_ORIGINS = [
+    'https://vetal-sand-solutions.vercel.app',
+    'https://*.vercel.app',
+    'https://*.now.sh',
+]
 
 _raw_csrf = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '')
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = list(_DEFAULT_CSRF_TRUSTED_ORIGINS)
+
 if _raw_csrf.strip():
     for _origin in _raw_csrf.split(','):
         _cleaned_orig = _clean_origin(_origin)
         if _cleaned_orig and _cleaned_orig not in CSRF_TRUSTED_ORIGINS:
             CSRF_TRUSTED_ORIGINS.append(_cleaned_orig)
-
-for _default_origin in ('https://*.vercel.app', 'https://*.now.sh'):
-    if _default_origin not in CSRF_TRUSTED_ORIGINS:
-        CSRF_TRUSTED_ORIGINS.append(_default_origin)
 
 for _vercel_env_key in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL', 'VERCEL_BRANCH_URL'):
     _v_origin = os.environ.get(_vercel_env_key)

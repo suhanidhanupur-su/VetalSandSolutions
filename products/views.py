@@ -1,3 +1,5 @@
+import logging
+from django.db import DatabaseError, OperationalError, ProgrammingError
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -5,46 +7,55 @@ from django.views.decorators.http import require_POST
 
 from .models import Category, Product, Wishlist
 
+logger = logging.getLogger(__name__)
+
 
 def product_list(request):
     search_query = request.GET.get('q', '').strip()
     selected_category = request.GET.get('category', '').strip()
     selected_grade = request.GET.get('grade', '').strip()
 
-    products = Product.objects.filter(is_active=True).select_related('category')
+    try:
+        products = Product.objects.filter(is_active=True).select_related('category')
 
-    if search_query:
-        products = products.filter(
-            Q(name__icontains=search_query)
-            | Q(short_description__icontains=search_query)
-            | Q(description__icontains=search_query)
+        if search_query:
+            products = products.filter(
+                Q(name__icontains=search_query)
+                | Q(short_description__icontains=search_query)
+                | Q(description__icontains=search_query)
+            )
+
+        if selected_category:
+            products = products.filter(category__slug=selected_category)
+
+        if selected_grade:
+            products = products.filter(grade=selected_grade)
+
+        products = list(products.prefetch_related('images').order_by('-created_at'))
+
+        wishlist_product_ids = set()
+        if request.user.is_authenticated:
+            wishlist_product_ids = set(
+                Wishlist.objects.filter(user=request.user, product__in=products).values_list('product_id', flat=True)
+            )
+
+        for product in products:
+            product.primary_image = product.images.filter(is_primary=True).first() or product.images.first()
+
+        categories = list(Category.objects.filter(is_active=True).order_by('name'))
+        grades = list(
+            Product.objects.filter(is_active=True)
+            .exclude(grade__exact='')
+            .values_list('grade', flat=True)
+            .distinct()
+            .order_by('grade')
         )
-
-    if selected_category:
-        products = products.filter(category__slug=selected_category)
-
-    if selected_grade:
-        products = products.filter(grade=selected_grade)
-
-    products = products.prefetch_related('images').order_by('-created_at')
-
-    wishlist_product_ids = set()
-    if request.user.is_authenticated:
-        wishlist_product_ids = set(
-            Wishlist.objects.filter(user=request.user, product__in=products).values_list('product_id', flat=True)
-        )
-
-    for product in products:
-        product.primary_image = product.images.filter(is_primary=True).first() or product.images.first()
-
-    categories = Category.objects.filter(is_active=True).order_by('name')
-    grades = (
-        Product.objects.filter(is_active=True)
-        .exclude(grade__exact='')
-        .values_list('grade', flat=True)
-        .distinct()
-        .order_by('grade')
-    )
+    except (DatabaseError, OperationalError, ProgrammingError) as exc:
+        logger.warning("Database tables unmigrated in product_list: %s", exc)
+        products = []
+        categories = []
+        grades = []
+        wishlist_product_ids = set()
 
     context = {
         'products': products,

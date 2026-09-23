@@ -1,4 +1,6 @@
+import logging
 from django.contrib import messages
+from django.db import DatabaseError, OperationalError, ProgrammingError
 from django.shortcuts import redirect, render
 
 from enquiries.forms import ContactEnquiryForm, QuoteRequestForm
@@ -8,13 +10,21 @@ from products.models import Product
 from .email_notifications import send_contact_enquiry_emails, send_quote_request_emails
 from .models import GalleryImage
 
+logger = logging.getLogger(__name__)
+
 
 def home(request):
-    products = Product.objects.filter(is_active=True).select_related('category')[:5]
-    focus_gallery_image = GalleryImage.objects.filter(
-        is_active=True,
-        category__iexact='Work in Focus',
-    ).first()
+    try:
+        products = list(Product.objects.filter(is_active=True).select_related('category')[:5])
+        focus_gallery_image = GalleryImage.objects.filter(
+            is_active=True,
+            category__iexact='Work in Focus',
+        ).first()
+    except (DatabaseError, OperationalError, ProgrammingError) as exc:
+        logger.warning("Database tables unmigrated or unavailable in home view: %s", exc)
+        products = []
+        focus_gallery_image = None
+
     return render(request, 'core/home.html', {
         'home_products': products,
         'focus_gallery_image': focus_gallery_image,
@@ -38,7 +48,11 @@ def portfolio(request):
 
 
 def gallery(request):
-    gallery_images = GalleryImage.objects.filter(is_active=True)
+    try:
+        gallery_images = list(GalleryImage.objects.filter(is_active=True))
+    except (DatabaseError, OperationalError, ProgrammingError) as exc:
+        logger.warning("Database tables unmigrated or unavailable in gallery view: %s", exc)
+        gallery_images = []
     return render(request, 'core/gallery.html', {'gallery_images': gallery_images})
 
 
