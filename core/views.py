@@ -143,6 +143,25 @@ def system_status(request):
             ],
             'vercel_env': os.environ.get('VERCEL_ENV', 'unknown'),
         }
+        raw_k = os.environ.get('RAZORPAY_KEY_ID', '')
+        raw_s = os.environ.get('RAZORPAY_KEY_SECRET', '')
+        clean_k = raw_k.strip().strip('\'"')
+        if not clean_k:
+            key_format = 'empty'
+        elif clean_k.lower() in {'value', 'your-key-id', 'none', 'null'}:
+            key_format = clean_k.lower()
+        elif clean_k.startswith('rzp_test_'):
+            key_format = f'rzp_test_valid (len={len(clean_k)})'
+        elif clean_k.startswith('rzp_live_'):
+            key_format = f'rzp_live_valid (len={len(clean_k)})'
+        else:
+            key_format = f'other_format (len={len(clean_k)})'
+
+        data['razorpay_debug'] = {
+            'raw_key_format': key_format,
+            'raw_secret_len': len(raw_s.strip().strip('\'"')),
+            'raw_secret_is_empty': len(raw_s.strip().strip('\'"')) == 0,
+        }
     except Exception as exc:
         data['status'] = 'error'
         data['error_type'] = exc.__class__.__name__
