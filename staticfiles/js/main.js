@@ -50,17 +50,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    /* ── Close mobile offcanvas drawer on nav link click ── */
+    /* ── Mobile offcanvas drawer lifecycle and links ── */
     const offcanvasEl = document.getElementById('mainNavbar');
-    if (offcanvasEl && typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
-        offcanvasEl.querySelectorAll('.nav-link, .mobile-drawer-item').forEach(function (link) {
-            link.addEventListener('click', function () {
-                const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-                if (offcanvasInstance) {
-                    offcanvasInstance.hide();
-                }
-            });
+    const premiumNavbar = document.querySelector('.premium-navbar');
+    if (offcanvasEl) {
+        offcanvasEl.addEventListener('show.bs.offcanvas', function () {
+            if (premiumNavbar) premiumNavbar.style.zIndex = '1050';
+            document.body.classList.add('offcanvas-open');
         });
+        offcanvasEl.addEventListener('hidden.bs.offcanvas', function () {
+            if (premiumNavbar) premiumNavbar.style.zIndex = '';
+            document.body.classList.remove('offcanvas-open');
+        });
+
+        if (typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
+            offcanvasEl.querySelectorAll('.nav-link, .mobile-drawer-item, .mobile-auth-grid .btn, .mobile-quote-btn').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (offcanvasInstance) {
+                        offcanvasInstance.hide();
+                    }
+                });
+            });
+        }
     }
 
 });

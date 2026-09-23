@@ -513,7 +513,7 @@ textarea {
 .hero-section {
     position: relative;
     min-height: clamp(42.5rem, 78vh, 47.5rem);
-    background-image: url("../images/BANNERRR.png");
+    background-image: url("../images/BANNERRR.8fc099190892.png");
     background-size: cover;
     background-position: center;
     border-bottom: 1px solid rgba(198, 154, 90, 0.18);
@@ -4941,7 +4941,7 @@ body {
 .vs-hero-media {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(33, 27, 24, 0.97) 0%, rgba(33, 27, 24, 0.83) 35%, rgba(33, 27, 24, 0.28) 72%, rgba(33, 27, 24, 0.1) 100%), url('../images/BANNERRR.png') center / cover no-repeat;
+    background: linear-gradient(90deg, rgba(33, 27, 24, 0.97) 0%, rgba(33, 27, 24, 0.83) 35%, rgba(33, 27, 24, 0.28) 72%, rgba(33, 27, 24, 0.1) 100%), url("../images/BANNERRR.8fc099190892.png") center / cover no-repeat;
 }
 
 .vs-hero-inner { position: relative; z-index: 1; min-height: inherit; display: flex; align-items: center; }
@@ -5030,7 +5030,7 @@ body {
 
 @media (max-width: 767.98px) {
     .vs-hero, .vs-hero-inner { min-height: 620px; }
-    .vs-hero-media { background: linear-gradient(180deg, rgba(33, 27, 24, 0.58), rgba(33, 27, 24, 0.93)), url('../images/BANNERRR.png') center / cover no-repeat; }
+    .vs-hero-media { background: linear-gradient(180deg, rgba(33, 27, 24, 0.58), rgba(33, 27, 24, 0.93)), url("../images/BANNERRR.8fc099190892.png") center / cover no-repeat; }
     .vs-hero-copy { padding: 4rem 0; }
     .vs-trust-list { gap: 0.8rem 1rem; margin-top: 2.8rem; }
     .vs-about-grid, .vs-quality > .container > .vs-quality-grid { grid-template-columns: 1fr; gap: 2.5rem; }
