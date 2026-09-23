@@ -20,7 +20,7 @@
                         {% if product_images %}
                             {% with main_image=product.primary_image|default:product_images.0 %}
                                 <div class="product-gallery-main">
-                                    {% if main_image and main_image.image %}
+                                    {% if main_image and main_image.image and main_image.image.url %}
                                         <img src="{{ main_image.image.url }}" alt="{{ main_image.alt_text|default:product.name }}" class="product-gallery-image">
                                     {% else %}
                                         <div class="product-placeholder product-gallery-placeholder" aria-label="No product image available">
@@ -32,7 +32,7 @@
 
                             <div class="product-gallery-thumbs">
                                 {% for image in product_images %}
-                                    {% if image and image.image %}
+                                    {% if image and image.image and image.image.url %}
                                         <div class="product-thumb">
                                             <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="product-thumb-image">
                                         </div>
@@ -124,7 +124,7 @@
                         <div class="col-12 col-md-6 col-xl-3">
                             <article class="related-product-card">
                                 <div class="related-product-image-wrap">
-                                    {% if related_product.primary_image and related_product.primary_image.image %}
+                                    {% if related_product.primary_image and related_product.primary_image.image and related_product.primary_image.image.url %}
                                         <img src="{{ related_product.primary_image.image.url }}" alt="{{ related_product.primary_image.alt_text|default:related_product.name }}" class="related-product-image">
                                     {% else %}
                                         <div class="product-placeholder related-product-placeholder" aria-label="No product image available">

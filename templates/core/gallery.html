@@ -16,8 +16,12 @@
                     {% for gallery_image in gallery_images %}
                         <article class="gallery-card">
                             <div class="gallery-image-wrap">
-                                {% if gallery_image.image %}
+                                {% if gallery_image.image and gallery_image.image.url %}
                                     <img src="{{ gallery_image.image.url }}" alt="{{ gallery_image.alt_text|default:gallery_image.title }}" class="gallery-image">
+                                {% else %}
+                                    <div class="product-placeholder" aria-label="No image available">
+                                        <span>{{ gallery_image.title }}</span>
+                                    </div>
                                 {% endif %}
                                 <span class="gallery-overlay"></span>
                             </div>

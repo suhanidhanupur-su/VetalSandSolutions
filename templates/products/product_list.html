@@ -63,7 +63,7 @@
                                             </svg>
                                         </button>
                                     </form>
-                                    {% if product.primary_image and product.primary_image.image %}
+                                    {% if product.primary_image and product.primary_image.image and product.primary_image.image.url %}
                                         <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="product-image">
                                     {% else %}
                                         <div class="product-placeholder" aria-label="No product image available">

@@ -205,15 +205,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STORAGES = {
-    'default': {
-        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
-    },
-    'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
-    },
-}
-
 _cloudinary_placeholders = {'', 'value', 'your-cloud-name', 'your-api-key', 'your-api-secret'}
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip(),
@@ -230,6 +221,43 @@ if CLOUDINARY_CONFIGURED:
         api_key=CLOUDINARY_STORAGE['API_KEY'],
         api_secret=CLOUDINARY_STORAGE['API_SECRET'],
     )
+    STORAGES = {
+        'default': {
+            'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
+else:
+    # If cloud name is provided on its own for read-only delivery
+    _single_cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME']
+    if _single_cloud_name and _single_cloud_name.lower() not in _cloudinary_placeholders:
+        cloudinary.config(cloud_name=_single_cloud_name)
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
+
+# Safe guard: prevent CloudinaryResource.url from raising uncaught ValueError in templates
+try:
+    from cloudinary import CloudinaryResource
+    _orig_cr_url = CloudinaryResource.url
+
+    def _safe_cr_url(self):
+        try:
+            return _orig_cr_url.fget(self)
+        except (ValueError, Exception):
+            return ''
+
+    CloudinaryResource.url = property(_safe_cr_url)
+except Exception:
+    pass
+
 
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
 RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
