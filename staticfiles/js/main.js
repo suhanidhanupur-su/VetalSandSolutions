@@ -50,4 +50,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    /* ── Close mobile offcanvas drawer on nav link click ── */
+    const offcanvasEl = document.getElementById('mainNavbar');
+    if (offcanvasEl && typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
+        offcanvasEl.querySelectorAll('.nav-link, .mobile-drawer-item').forEach(function (link) {
+            link.addEventListener('click', function () {
+                const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                if (offcanvasInstance) {
+                    offcanvasInstance.hide();
+                }
+            });
+        });
+    }
+
 });
+

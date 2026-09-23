@@ -1,6 +1,4 @@
-import logging
 from django.contrib import messages
-from django.db import DatabaseError, OperationalError, ProgrammingError
 from django.shortcuts import redirect, render
 
 from enquiries.forms import ContactEnquiryForm, QuoteRequestForm
@@ -10,20 +8,13 @@ from products.models import Product
 from .email_notifications import send_contact_enquiry_emails, send_quote_request_emails
 from .models import GalleryImage
 
-logger = logging.getLogger(__name__)
-
 
 def home(request):
-    try:
-        products = list(Product.objects.filter(is_active=True).select_related('category')[:5])
-        focus_gallery_image = GalleryImage.objects.filter(
-            is_active=True,
-            category__iexact='Work in Focus',
-        ).first()
-    except (DatabaseError, OperationalError, ProgrammingError) as exc:
-        logger.warning("Database tables unmigrated or unavailable in home view: %s", exc)
-        products = []
-        focus_gallery_image = None
+    products = list(Product.objects.filter(is_active=True).select_related('category')[:5])
+    focus_gallery_image = GalleryImage.objects.filter(
+        is_active=True,
+        category__iexact='Work in Focus',
+    ).first()
 
     return render(request, 'core/home.html', {
         'home_products': products,
@@ -48,12 +39,9 @@ def portfolio(request):
 
 
 def gallery(request):
-    try:
-        gallery_images = list(GalleryImage.objects.filter(is_active=True))
-    except (DatabaseError, OperationalError, ProgrammingError) as exc:
-        logger.warning("Database tables unmigrated or unavailable in gallery view: %s", exc)
-        gallery_images = []
+    gallery_images = list(GalleryImage.objects.filter(is_active=True))
     return render(request, 'core/gallery.html', {'gallery_images': gallery_images})
+
 
 
 def contact(request):
@@ -99,3 +87,51 @@ def request_quote(request):
         form = QuoteRequestForm()
 
     return render(request, 'core/request_quote.html', {'form': form})
+
+
+def system_status(request):
+    import traceback
+    from django.http import JsonResponse
+    from django.db import connection
+    from django.db.migrations.recorder import MigrationRecorder
+    from products.models import Category, Product
+    from django.contrib.auth import get_user_model
+
+    data = {
+        'status': 'ok',
+        'database': {},
+    }
+    try:
+        connection.ensure_connection()
+        engine = connection.settings_dict.get('ENGINE', '')
+        raw_host = connection.settings_dict.get('HOST', '')
+        if raw_host:
+            masked_host = raw_host.split('@')[-1]
+        else:
+            masked_host = 'local-or-sqlite'
+
+        recorder = MigrationRecorder(connection)
+        applied_migrations = len(recorder.applied_migrations())
+
+        user_count = get_user_model().objects.count()
+        product_count = Product.objects.count()
+        active_product_count = Product.objects.filter(is_active=True).count()
+        category_count = Category.objects.count()
+
+        data['database'] = {
+            'connected': True,
+            'engine': engine.split('.')[-1],
+            'host': masked_host,
+            'applied_migrations_count': applied_migrations,
+            'users_count': user_count,
+            'products_total': product_count,
+            'products_active': active_product_count,
+            'categories_count': category_count,
+        }
+    except Exception as exc:
+        data['status'] = 'error'
+        data['error_type'] = exc.__class__.__name__
+        data['error_message'] = str(exc)
+        data['traceback'] = traceback.format_exc()
+
+    return JsonResponse(data)

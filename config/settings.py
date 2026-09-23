@@ -126,25 +126,46 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+IS_VERCEL = bool(
+    os.environ.get('VERCEL')
+    or os.environ.get('VERCEL_ENV')
+    or os.environ.get('VERCEL_URL')
+)
+
 DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.parse(
             DATABASE_URL,
-            conn_max_age=600,
+            conn_max_age=0,
+            conn_health_checks=True,
             ssl_require=not DEBUG,
         )
     }
 else:
+    if IS_VERCEL:
+        import shutil
+        tmp_db = Path('/tmp') / 'db.sqlite3'
+        source_db = BASE_DIR / 'db.sqlite3'
+        if not tmp_db.exists() and source_db.exists():
+            try:
+                shutil.copy2(source_db, tmp_db)
+            except Exception:
+                pass
+        db_path = tmp_db
+    else:
+        db_path = BASE_DIR / 'db.sqlite3'
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': db_path,
             'OPTIONS': {
                 'timeout': 20,
             },
         }
     }
+
 
 
 # Password validation
