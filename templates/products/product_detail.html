@@ -21,7 +21,10 @@
                             {% with main_image=product.primary_image|default:product_images.0 %}
                                 <div class="product-gallery-main">
                                     {% if main_image and main_image.image and main_image.image.url %}
-                                        <img src="{{ main_image.image.url }}" alt="{{ main_image.alt_text|default:product.name }}" class="product-gallery-image">
+                                        <img src="{{ main_image.image.url }}" alt="{{ main_image.alt_text|default:product.name }}" class="product-gallery-image" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                                        <div class="product-placeholder product-gallery-placeholder" style="display: none;" aria-label="No product image available">
+                                            <span>Product Image</span>
+                                        </div>
                                     {% else %}
                                         <div class="product-placeholder product-gallery-placeholder" aria-label="No product image available">
                                             <span>Product Image</span>
@@ -125,7 +128,10 @@
                             <article class="related-product-card">
                                 <div class="related-product-image-wrap">
                                     {% if related_product.primary_image and related_product.primary_image.image and related_product.primary_image.image.url %}
-                                        <img src="{{ related_product.primary_image.image.url }}" alt="{{ related_product.primary_image.alt_text|default:related_product.name }}" class="related-product-image">
+                                        <img src="{{ related_product.primary_image.image.url }}" alt="{{ related_product.primary_image.alt_text|default:related_product.name }}" class="related-product-image" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                                        <div class="product-placeholder related-product-placeholder" style="display: none;" aria-label="No product image available">
+                                            <span>Product Image</span>
+                                        </div>
                                     {% else %}
                                         <div class="product-placeholder related-product-placeholder" aria-label="No product image available">
                                             <span>Product Image</span>

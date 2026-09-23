@@ -22,7 +22,10 @@
                             <article class="wishlist-card">
                                 <div class="wishlist-image-wrap">
                                     {% if product.primary_image and product.primary_image.image and product.primary_image.image.url %}
-                                        <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="wishlist-image">
+                                        <img src="{{ product.primary_image.image.url }}" alt="{{ product.primary_image.alt_text|default:product.name }}" class="wishlist-image" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                                        <div class="product-placeholder" style="display: none;" aria-label="No product image available">
+                                            <span>Product Image</span>
+                                        </div>
                                     {% else %}
                                         <div class="product-placeholder" aria-label="No product image available">
                                             <span>Product Image</span>

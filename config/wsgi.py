@@ -21,12 +21,20 @@ if os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV') or os.environ.get('V
         from django.core.management import call_command
         call_command('migrate', interactive=False)
 
-        from products.models import Product
+        from products.models import Product, ProductImage
         if Product.objects.count() == 0:
             from pathlib import Path
             fixture_path = Path(__file__).resolve().parent.parent / 'initial_catalog.json'
             if fixture_path.exists():
                 call_command('loaddata', str(fixture_path))
+
+        # Ensure each product has a designated primary image
+        for p in Product.objects.prefetch_related('images'):
+            if not p.images.filter(is_primary=True).exists():
+                first_img = p.images.first()
+                if first_img:
+                    first_img.is_primary = True
+                    first_img.save(update_fields=['is_primary'])
     except Exception as exc:
         import logging
         logging.getLogger('config.wsgi').error("Vercel startup migration/initialization error: %s", exc)

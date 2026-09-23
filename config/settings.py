@@ -26,7 +26,7 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '').strip() or 'django-insecure-vetal-sand-solutions-fallback-key-for-serverless-2026'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in {'1', 'true', 'yes', 'on'}
@@ -206,21 +206,35 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 _cloudinary_placeholders = {'', 'value', 'your-cloud-name', 'your-api-key', 'your-api-secret'}
+_DEFAULT_CLOUD_NAME = 'gmswmfkp'
+_raw_cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip()
+if not _raw_cloud_name or _raw_cloud_name.lower() in _cloudinary_placeholders:
+    _resolved_cloud_name = _DEFAULT_CLOUD_NAME
+else:
+    _resolved_cloud_name = _raw_cloud_name
+
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip(),
+    'CLOUD_NAME': _resolved_cloud_name,
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '').strip(),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '').strip(),
 }
-CLOUDINARY_CONFIGURED = all(
-    value and value.lower() not in _cloudinary_placeholders
-    for value in CLOUDINARY_STORAGE.values()
+CLOUDINARY_CONFIGURED = (
+    bool(CLOUDINARY_STORAGE['CLOUD_NAME'])
+    and bool(CLOUDINARY_STORAGE['API_KEY'])
+    and bool(CLOUDINARY_STORAGE['API_SECRET'])
+    and CLOUDINARY_STORAGE['API_KEY'].lower() not in _cloudinary_placeholders
+    and CLOUDINARY_STORAGE['API_SECRET'].lower() not in _cloudinary_placeholders
 )
+
+# Always configure Cloudinary with the resolved cloud name and HTTPS
+cloudinary.config(
+    cloud_name=_resolved_cloud_name,
+    api_key=CLOUDINARY_STORAGE['API_KEY'] or None,
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'] or None,
+    secure=True,
+)
+
 if CLOUDINARY_CONFIGURED:
-    cloudinary.config(
-        cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
-        api_key=CLOUDINARY_STORAGE['API_KEY'],
-        api_secret=CLOUDINARY_STORAGE['API_SECRET'],
-    )
     STORAGES = {
         'default': {
             'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
@@ -230,10 +244,6 @@ if CLOUDINARY_CONFIGURED:
         },
     }
 else:
-    # If cloud name is provided on its own for read-only delivery
-    _single_cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME']
-    if _single_cloud_name and _single_cloud_name.lower() not in _cloudinary_placeholders:
-        cloudinary.config(cloud_name=_single_cloud_name)
     STORAGES = {
         'default': {
             'BACKEND': 'django.core.files.storage.FileSystemStorage',
@@ -244,15 +254,30 @@ else:
     }
 
 # Safe guard: prevent CloudinaryResource.url from raising uncaught ValueError in templates
+# and ensure secure HTTPS URLs with direct fallback
 try:
     from cloudinary import CloudinaryResource
     _orig_cr_url = CloudinaryResource.url
 
     def _safe_cr_url(self):
         try:
-            return _orig_cr_url.fget(self)
-        except (ValueError, Exception):
-            return ''
+            url = _orig_cr_url.fget(self)
+            if url:
+                if url.startswith('http://'):
+                    url = 'https://' + url[7:]
+                return url
+        except Exception:
+            pass
+
+        # Fallback to direct URL construction if needed
+        public_id = getattr(self, 'public_id', None)
+        if public_id:
+            version = getattr(self, 'version', None)
+            v_part = f'v{version}/' if version else ''
+            fmt = getattr(self, 'format', None)
+            ext = f'.{fmt}' if fmt and not str(public_id).endswith(f'.{fmt}') else ''
+            return f'https://res.cloudinary.com/{_resolved_cloud_name}/image/upload/{v_part}{public_id}{ext}'
+        return ''
 
     CloudinaryResource.url = property(_safe_cr_url)
 except Exception:

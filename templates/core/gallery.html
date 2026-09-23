@@ -17,7 +17,10 @@
                         <article class="gallery-card">
                             <div class="gallery-image-wrap">
                                 {% if gallery_image.image and gallery_image.image.url %}
-                                    <img src="{{ gallery_image.image.url }}" alt="{{ gallery_image.alt_text|default:gallery_image.title }}" class="gallery-image">
+                                    <img src="{{ gallery_image.image.url }}" alt="{{ gallery_image.alt_text|default:gallery_image.title }}" class="gallery-image" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                                    <div class="product-placeholder" style="display: none;" aria-label="No image available">
+                                        <span>{{ gallery_image.title }}</span>
+                                    </div>
                                 {% else %}
                                     <div class="product-placeholder" aria-label="No image available">
                                         <span>{{ gallery_image.title }}</span>

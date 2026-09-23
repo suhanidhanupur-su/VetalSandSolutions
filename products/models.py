@@ -43,6 +43,16 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def primary_image(self):
+        if hasattr(self, '_primary_image'):
+            return self._primary_image
+        return self.images.filter(is_primary=True).first() or self.images.first()
+
+    @primary_image.setter
+    def primary_image(self, val):
+        self._primary_image = val
+
     class Meta:
         ordering = ['-created_at']
 

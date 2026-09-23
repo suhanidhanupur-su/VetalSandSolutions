@@ -51,7 +51,7 @@
             {% for product in home_products %}
                 <article class="vs-product-card">
                     <a href="{% url 'product_detail' product.slug %}" class="vs-product-image">
-                        {% with image=product.images.first %}{% if image and image.image.url %}<img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}">{% else %}<img src="{% static 'images/silica-sand.jpeg' %}" alt="Silica sand material">{% endif %}{% endwith %}
+                        {% with image=product.primary_image|default:product.images.first %}{% if image and image.image and image.image.url %}<img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" loading="lazy" onerror="this.src='{% static 'images/silica-sand.jpeg' %}';">{% else %}<img src="{% static 'images/silica-sand.jpeg' %}" alt="Silica sand material">{% endif %}{% endwith %}
                         <span class="vs-product-index">0{{ forloop.counter }}</span>
                     </a>
 
