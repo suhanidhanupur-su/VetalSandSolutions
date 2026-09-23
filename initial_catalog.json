@@ -144,6 +144,106 @@
   }
 },
 {
+  "model": "products.product",
+  "pk": 6,
+  "fields": {
+    "category": 3,
+    "name": "Resin Coated Sand (RCS)",
+    "slug": "resin-coated-sand",
+    "short_description": "Premium resin coated silica sand for shell moulding and foundry core casting.",
+    "description": "Vetal Sand Solutions provides high-performance Resin Coated Sand engineered specifically for shell moulding, core making, and high-precision casting. Coated with specialized phenolic resin for superior tensile strength, low gas evolution, and thermal shock resistance.",
+    "grade": "RCS-60",
+    "price": "1450.00",
+    "specifications": "AFS Grain Fineness: 55-65\nResin Content: 2.5% - 3.5%\nTransverse Strength: >28 kg/cm²\nLoss on Ignition: 2.8% - 3.8%",
+    "applications": "Shell moulding, core making for automotive engine blocks, pumps, valves, and precision iron castings.",
+    "industries": "Foundries & Castings, Automotive, Heavy Engineering",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-09-23T17:14:28.160Z",
+    "updated_at": "2026-09-23T17:14:28.160Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 7,
+  "fields": {
+    "category": 1,
+    "name": "High Purity Quartz Silica Sand",
+    "slug": "high-purity-quartz-silica-sand",
+    "short_description": "Ultra-pure 99.5%+ SiO2 white quartz sand for solar glass, optical glass, and advanced ceramics.",
+    "description": "Refined high-purity quartz silica sand featuring minimum 99.5% SiO2 content and ultra-low iron oxide (Fe2O3 < 0.015%). Processed through multiple washing and magnetic separation stages to deliver maximum optical transmission and chemical purity.",
+    "grade": "Q-99.5",
+    "price": "1850.00",
+    "specifications": "SiO2: 99.6% min\nFe2O3: < 0.015%\nAl2O3: < 0.15%\nMoisture: < 0.1%\nGrain Size: 100-300 microns",
+    "applications": "Solar photovoltaic glass, laboratory glassware, optical fiber, premium sanitaryware, and electronics filler.",
+    "industries": "Glass Manufacturing, Solar Energy, Ceramics, Electronics",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-09-23T17:14:29.768Z",
+    "updated_at": "2026-09-23T17:14:29.768Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 8,
+  "fields": {
+    "category": 2,
+    "name": "Water Filtration Silica Gravel & Sand",
+    "slug": "water-filtration-silica-gravel-sand",
+    "short_description": "Naturally washed, rounded quartz silica gravel and multi-grade sand for municipal and industrial water filtration.",
+    "description": "Washed, sub-angular to rounded natural quartz filtration sand and support gravel compliant with IS:8419 standards. Provides exceptional turbidity removal, extended filter run times, and high chemical resistance against acids and alkalis in ETP and water treatment plants.",
+    "grade": "WF-16/30",
+    "price": "650.00",
+    "specifications": "Effective Size (D10): 0.45mm - 0.55mm\nUniformity Coefficient: < 1.4\nSpecific Gravity: 2.65\nAcid Solubility: < 1.0%",
+    "applications": "Multi-media pressure sand filters, rapid gravity filters, industrial ETP/STP plants, swimming pool filtration, and borewell gravel packing.",
+    "industries": "Water Filtration, Municipal Utilities, Chemical Processing",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-09-23T17:14:30.878Z",
+    "updated_at": "2026-09-23T17:14:30.878Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 9,
+  "fields": {
+    "category": 2,
+    "name": "Epoxy Flooring Grade Silica Sand",
+    "slug": "epoxy-flooring-grade-silica-sand",
+    "short_description": "Kiln-dried, spherical silica aggregate for self-leveling epoxy flooring and anti-skid coatings.",
+    "description": "Specialized kiln-dried silica sand granules graded for seamless epoxy and polyurethane resin systems. Clean, dust-free, and moisture-free aggregate providing excellent mechanical wear resistance, anti-skid grip, and compressive strength for industrial shop floors.",
+    "grade": "EF-30/80",
+    "price": "820.00",
+    "specifications": "Mesh Size: 30/80 Mesh (0.18mm - 0.60mm)\nMoisture Content: < 0.2%\nMohs Hardness: 7.0\nCleanliness: Washed & Kiln Dried",
+    "applications": "Heavy-duty industrial flooring, warehouse ramps, pharmaceutical cleanrooms, car park decks, and decorative resin screeds.",
+    "industries": "Construction & Masonry, Infrastructure, Flooring & Coatings",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-09-23T17:14:32.047Z",
+    "updated_at": "2026-09-23T17:14:32.047Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 10,
+  "fields": {
+    "category": 2,
+    "name": "Abrasive Sand Blasting Silica Sand",
+    "slug": "abrasive-sand-blasting-silica-sand",
+    "short_description": "Sharp angular crystalline silica grit for surface rust removal, paint stripping, and shot blasting.",
+    "description": "High-hardness crystalline silica sand abrasive with sharp, multi-faceted angular particles designed for compressed air sandblasting. Quickly removes heavy rust, mill scale, and industrial coatings to achieve SA 2.5 surface profile finish on structural steel.",
+    "grade": "SB-20/40",
+    "price": "720.00",
+    "specifications": "Grain Size: 20/40 Mesh (0.42mm - 0.84mm)\nBulk Density: 1.55 g/cm³\nAngularity: Sharp Angular\nHardness: 7 Mohs",
+    "applications": "Surface preparation, rust and paint stripping from ship hulls, bridges, storage tanks, and structural steel fabrication.",
+    "industries": "Foundries & Castings, Construction & Masonry, Marine & Shipyard",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-09-23T17:14:33.202Z",
+    "updated_at": "2026-09-23T17:14:33.202Z"
+  }
+},
+{
   "model": "products.productimage",
   "pk": 1,
   "fields": {
@@ -210,73 +310,58 @@
   }
 },
 {
-  "model": "core.galleryimage",
-  "pk": 1,
+  "model": "products.productimage",
+  "pk": 8,
   "fields": {
-    "title": "Silica Sand",
-    "description": "High-quality silica sand for industrial applications.",
-    "image": "image/upload/v1789915952/lurbycwnz9oc0mh7smpx.jpg",
-    "category": "Silica Sand",
-    "alt_text": "Silica sand samples displayed in different grades.",
-    "is_active": true,
-    "display_order": 0,
-    "created_at": "2026-09-20T14:52:32.733Z"
+    "product": 6,
+    "image": "image/upload/products/vetal_resin-coated-sand",
+    "alt_text": "Resin Coated Sand (RCS) - Vetal Sand Solutions",
+    "is_primary": true,
+    "created_at": "2026-09-23T17:14:28.214Z"
   }
 },
 {
-  "model": "core.galleryimage",
-  "pk": 2,
+  "model": "products.productimage",
+  "pk": 9,
   "fields": {
-    "title": "Products & Grades",
-    "description": "Explore our range of silica sand products and grades.",
-    "image": "image/upload/v1789916080/j5hknjdr87v7lllfsmgm.jpg",
-    "category": "Products & Grades",
-    "alt_text": "Silica sand samples displayed in different grades.",
-    "is_active": true,
-    "display_order": 2,
-    "created_at": "2026-09-20T14:54:41.357Z"
+    "product": 7,
+    "image": "image/upload/products/vetal_high-purity-quartz-silica-sand",
+    "alt_text": "High Purity Quartz Silica Sand - Vetal Sand Solutions",
+    "is_primary": true,
+    "created_at": "2026-09-23T17:14:29.825Z"
   }
 },
 {
-  "model": "core.galleryimage",
-  "pk": 3,
+  "model": "products.productimage",
+  "pk": 10,
   "fields": {
-    "title": "Industrial Applications",
-    "description": "Discover the use of silica sand across industrial processes.",
-    "image": "image/upload/v1789916177/qxjxatpv6gy5fjaz26fc.jpg",
-    "category": "Industrial Applications",
-    "alt_text": "Industrial foundry casting process using sand molds.",
-    "is_active": true,
-    "display_order": 3,
-    "created_at": "2026-09-20T14:56:18.421Z"
+    "product": 8,
+    "image": "image/upload/products/vetal_water-filtration-silica-gravel-sand",
+    "alt_text": "Water Filtration Silica Gravel & Sand - Vetal Sand Solutions",
+    "is_primary": true,
+    "created_at": "2026-09-23T17:14:30.889Z"
   }
 },
 {
-  "model": "core.galleryimage",
-  "pk": 4,
+  "model": "products.productimage",
+  "pk": 11,
   "fields": {
-    "title": "Glass Manufacturing",
-    "description": "Silica sand and its role in glass manufacturing.",
-    "image": "image/upload/v1789916279/lrsrx20ssdomybx7iyk3.jpg",
-    "category": "Glass Manufacturing",
-    "alt_text": "Industrial glass manufacturing production line.",
-    "is_active": true,
-    "display_order": 4,
-    "created_at": "2026-09-20T14:58:00.416Z"
+    "product": 9,
+    "image": "image/upload/products/vetal_epoxy-flooring-grade-silica-sand",
+    "alt_text": "Epoxy Flooring Grade Silica Sand - Vetal Sand Solutions",
+    "is_primary": true,
+    "created_at": "2026-09-23T17:14:32.102Z"
   }
 },
 {
-  "model": "core.galleryimage",
-  "pk": 5,
+  "model": "products.productimage",
+  "pk": 12,
   "fields": {
-    "title": "Water Filtration",
-    "description": "Silica sand used as filter media in water treatment applications.",
-    "image": "image/upload/v1789916379/j1gowcrmlseymmz7xxsb.jpg",
-    "category": "Water Filtration",
-    "alt_text": "Silica sand filter media for water filtration.",
-    "is_active": true,
-    "display_order": 4,
-    "created_at": "2026-09-20T14:59:40.062Z"
+    "product": 10,
+    "image": "image/upload/products/vetal_abrasive-sand-blasting-silica-sand",
+    "alt_text": "Abrasive Sand Blasting Silica Sand - Vetal Sand Solutions",
+    "is_primary": true,
+    "created_at": "2026-09-23T17:14:33.213Z"
   }
 }
 ]

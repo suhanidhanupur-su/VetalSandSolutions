@@ -265,6 +265,8 @@ try:
             if url:
                 if url.startswith('http://'):
                     url = 'https://' + url[7:]
+                if not url.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif')):
+                    url = f'{url}.jpg'
                 return url
         except Exception:
             pass
@@ -274,8 +276,8 @@ try:
         if public_id:
             version = getattr(self, 'version', None)
             v_part = f'v{version}/' if version else ''
-            fmt = getattr(self, 'format', None)
-            ext = f'.{fmt}' if fmt and not str(public_id).endswith(f'.{fmt}') else ''
+            fmt = getattr(self, 'format', None) or 'jpg'
+            ext = f'.{fmt}' if not str(public_id).lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif')) else ''
             return f'https://res.cloudinary.com/{_resolved_cloud_name}/image/upload/{v_part}{public_id}{ext}'
         return ''
 

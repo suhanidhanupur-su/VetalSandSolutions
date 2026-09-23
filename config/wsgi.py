@@ -22,7 +22,7 @@ if os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV') or os.environ.get('V
         call_command('migrate', interactive=False)
 
         from products.models import Product, ProductImage
-        if Product.objects.count() == 0:
+        if Product.objects.count() < 10:
             from pathlib import Path
             fixture_path = Path(__file__).resolve().parent.parent / 'initial_catalog.json'
             if fixture_path.exists():
