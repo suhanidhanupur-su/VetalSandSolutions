@@ -136,6 +136,11 @@ def system_status(request):
             'key_id_set': bool(getattr(settings, 'RAZORPAY_KEY_ID', '')),
             'key_prefix': settings.RAZORPAY_KEY_ID[:8] if getattr(settings, 'RAZORPAY_KEY_ID', '') else '',
             'secret_set': bool(getattr(settings, 'RAZORPAY_KEY_SECRET', '')),
+            'matching_env_keys': [
+                k for k in sorted(os.environ.keys())
+                if any(t in k.upper() for t in ('RAZOR', 'RZP', 'PAYMENT'))
+            ],
+            'vercel_env': os.environ.get('VERCEL_ENV', 'unknown'),
         }
     except Exception as exc:
         data['status'] = 'error'

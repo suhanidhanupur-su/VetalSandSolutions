@@ -56,7 +56,7 @@ def create_razorpay_order(request, order_id):
 			'receipt': f'order_{order.id}',
 		})
 	except Exception as exc:
-		logger.warning('Razorpay order creation failed for order_id=%s: %s', order.id, exc)
+		logger.error('Razorpay order creation failed for order_id=%s: %s', order.id, exc, exc_info=True)
 		return JsonResponse(
 			{'success': False, 'message': 'Unable to start online payment. Please contact us.'},
 			status=502,

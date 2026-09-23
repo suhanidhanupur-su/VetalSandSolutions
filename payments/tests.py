@@ -179,3 +179,17 @@ class PaymentModelTests(TestCase):
 		)
 		self.assertEqual(second_response.status_code, 400)
 		self.assertEqual(len(mail.outbox), 1)
+
+	def test_razorpay_settings_aliases_and_cleaning(self):
+		import os
+		from unittest.mock import patch
+		from config.settings import _get_first_env
+
+		with patch.dict(os.environ, {'RAZORPAY_KEY_ID': '', 'RAZORPAY_KEY': ' "rzp_test_from_alias" '}, clear=False):
+			resolved = _get_first_env('RAZORPAY_KEY_ID', 'RAZORPAY_KEY')
+			self.assertEqual(resolved, 'rzp_test_from_alias')
+
+		with patch.dict(os.environ, {'RAZORPAY_KEY_ID': 'value'}, clear=False):
+			resolved_placeholder = _get_first_env('RAZORPAY_KEY_ID')
+			self.assertEqual(resolved_placeholder, '')
+

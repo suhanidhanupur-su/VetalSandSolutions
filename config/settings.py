@@ -285,10 +285,36 @@ except Exception:
 
 
 _razorpay_placeholders = {'', 'value', 'your-key-id', 'your-key-secret', 'rzp_test_xxx', 'rzp_live_xxx'}
-RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '').strip().strip('\'"')
-RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '').strip().strip('\'"')
-RAZORPAY_CURRENCY = 'INR'
-RAZORPAY_TEST_MODE = os.environ.get('RAZORPAY_TEST_MODE', 'True').lower() in {'1', 'true', 'yes', 'on'}
+
+def _get_first_env(*keys, default=''):
+    for k in keys:
+        val = os.environ.get(k)
+        if val is not None:
+            cleaned = str(val).strip().strip('\'"')
+            if cleaned and cleaned.lower() not in _razorpay_placeholders:
+                return cleaned
+    return default
+
+RAZORPAY_KEY_ID = _get_first_env(
+    'RAZORPAY_KEY_ID', 'RAZORPAY_KEY', 'RAZORPAY_API_KEY',
+    'RAZORPAY_PUBLIC_KEY', 'RZP_KEY_ID', 'RZP_KEY'
+)
+RAZORPAY_KEY_SECRET = _get_first_env(
+    'RAZORPAY_KEY_SECRET', 'RAZORPAY_SECRET', 'RAZORPAY_API_SECRET',
+    'RAZORPAY_PRIVATE_KEY', 'RAZORPAY_SECRET_KEY', 'RZP_KEY_SECRET', 'RZP_SECRET'
+)
+RAZORPAY_CURRENCY = os.environ.get('RAZORPAY_CURRENCY', 'INR').strip().strip('\'"') or 'INR'
+
+# Handle test mode: check explicit setting or infer from key prefix
+_raw_test_mode = os.environ.get('RAZORPAY_TEST_MODE', '').strip().lower()
+if _raw_test_mode in {'1', 'true', 'yes', 'on'}:
+    RAZORPAY_TEST_MODE = True
+elif _raw_test_mode in {'0', 'false', 'no', 'off'}:
+    RAZORPAY_TEST_MODE = False
+else:
+    # Auto-detect from key prefix: if key starts with rzp_test_, default to True; if rzp_live_, False
+    RAZORPAY_TEST_MODE = not RAZORPAY_KEY_ID.startswith('rzp_live_')
+
 RAZORPAY_CONFIGURED = (
     bool(RAZORPAY_KEY_ID)
     and bool(RAZORPAY_KEY_SECRET)

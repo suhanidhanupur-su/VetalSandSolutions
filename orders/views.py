@@ -91,6 +91,12 @@ def checkout(request):
 					form.add_error('payment_method', msg)
 				# 2. Check Razorpay configuration
 				elif not getattr(settings, 'RAZORPAY_CONFIGURED', False):
+					logger.warning(
+						'Online payment requested but Razorpay is not configured (KEY_ID present: %s, SECRET present: %s, TEST_MODE: %s)',
+						bool(getattr(settings, 'RAZORPAY_KEY_ID', '')),
+						bool(getattr(settings, 'RAZORPAY_KEY_SECRET', '')),
+						getattr(settings, 'RAZORPAY_TEST_MODE', True),
+					)
 					msg = 'Online payment is temporarily unavailable. Please choose Cash on Delivery or contact us.'
 					if is_ajax:
 						return JsonResponse({'success': False, 'message': msg}, status=503)
@@ -98,6 +104,7 @@ def checkout(request):
 				else:
 					client = _razorpay_client()
 					if client is None:
+						logger.warning('Razorpay client initialization failed despite RAZORPAY_CONFIGURED=True')
 						msg = 'Online payment gateway is temporarily unavailable. Please choose Cash on Delivery or contact us.'
 						if is_ajax:
 							return JsonResponse({'success': False, 'message': msg}, status=503)
@@ -154,7 +161,7 @@ def checkout(request):
 								'receipt': f'order_{order.id}',
 							})
 						except Exception as exc:
-							logger.warning('Razorpay order creation failed for order %s: %s', order.id, exc)
+							logger.error('Razorpay order creation failed for order %s: %s', order.id, exc, exc_info=True)
 							msg = 'Unable to initialize online payment with gateway. Please try again or choose Cash on Delivery.'
 							if is_ajax:
 								return JsonResponse({'success': False, 'message': msg}, status=502)
