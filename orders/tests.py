@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -140,6 +141,83 @@ class OrderFlowTests(TestCase):
 		self.assertContains(response, 'Online payment is currently unavailable for this order because pricing has not been configured.')
 		self.assertEqual(Order.objects.count(), 0)
 		self.assertEqual(self.client.session['cart'], {str(self.product.id): 1})
+
+	@override_settings(RAZORPAY_CONFIGURED=False)
+	def test_online_payment_refuses_when_razorpay_unconfigured(self):
+		self.product.price = Decimal('100.00')
+		self.product.save(update_fields=['price'])
+		self.client.force_login(self.user)
+		self._set_cart({self.product.id: 1})
+		checkout_data = self._checkout_data()
+		checkout_data['payment_method'] = Order.PaymentMethod.ONLINE
+
+		# Normal POST
+		response = self.client.post(reverse('checkout'), checkout_data)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Online payment is temporarily unavailable. Please choose Cash on Delivery or contact us.')
+		self.assertEqual(Order.objects.count(), 0)
+		self.assertEqual(self.client.session['cart'], {str(self.product.id): 1})
+
+		# AJAX POST
+		ajax_response = self.client.post(
+			reverse('checkout'),
+			checkout_data,
+			HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+		)
+		self.assertEqual(ajax_response.status_code, 503)
+		self.assertFalse(ajax_response.json()['success'])
+		self.assertIn('Online payment is temporarily unavailable', ajax_response.json()['message'])
+		self.assertEqual(Order.objects.count(), 0)
+
+	@patch('orders.views._razorpay_client')
+	@override_settings(
+		RAZORPAY_CONFIGURED=True,
+		RAZORPAY_KEY_ID='rzp_test_mock_123',
+		RAZORPAY_KEY_SECRET='mock_secret',
+		RAZORPAY_CURRENCY='INR',
+	)
+	def test_online_payment_ajax_creates_order_and_reuses_on_retry(self, client_factory):
+		mock_client = client_factory.return_value
+		mock_client.order.create.return_value = {'id': 'order_rzp_mock_123'}
+
+		self.product.price = Decimal('250.00')
+		self.product.save(update_fields=['price'])
+		self.client.force_login(self.user)
+		self._set_cart({self.product.id: 2})
+		checkout_data = self._checkout_data()
+		checkout_data['payment_method'] = Order.PaymentMethod.ONLINE
+
+		# 1. First AJAX submission
+		response = self.client.post(
+			reverse('checkout'),
+			checkout_data,
+			HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+		)
+		self.assertEqual(response.status_code, 200)
+		data = response.json()
+		self.assertTrue(data['success'])
+		self.assertEqual(data['razorpay_order_id'], 'order_rzp_mock_123')
+		self.assertEqual(data['key_id'], 'rzp_test_mock_123')
+		self.assertEqual(data['amount'], 50000)  # 2 * 250 = 500 => 50000 paise
+
+		self.assertEqual(Order.objects.count(), 1)
+		order = Order.objects.first()
+		self.assertEqual(order.status, Order.Status.PENDING)
+		self.assertEqual(order.total_amount, Decimal('500.00'))
+		# Cart must NOT be cleared yet
+		self.assertEqual(self.client.session['cart'], {str(self.product.id): 2})
+		self.assertEqual(self.client.session.get('pending_payment_order_id'), order.id)
+
+		# 2. Retry submission (e.g. user dismissed or retried payment) - must reuse same order, no duplicates!
+		retry_response = self.client.post(
+			reverse('checkout'),
+			checkout_data,
+			HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+		)
+		self.assertEqual(retry_response.status_code, 200)
+		self.assertEqual(Order.objects.count(), 1)
+		self.assertEqual(retry_response.json()['order_id'], order.id)
+
 
 	def test_priced_checkout_persists_total_and_item_price_snapshots(self):
 		self.product.price = Decimal('125.00')

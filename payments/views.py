@@ -20,11 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def _razorpay_client():
-	if (
-		not settings.RAZORPAY_TEST_MODE
-		or not settings.RAZORPAY_KEY_ID.startswith('rzp_test_')
-		or not settings.RAZORPAY_KEY_SECRET
-	):
+	if not getattr(settings, 'RAZORPAY_CONFIGURED', False):
 		return None
 	return razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
@@ -135,7 +131,12 @@ def verify_payment(request, order_id):
 		order.status = Order.Status.CONFIRMED
 		order.save(update_fields=['status', 'updated_at'])
 
+	request.session['cart'] = {}
+	request.session.pop('pending_payment_order_id', None)
+	request.session.modified = True
+
 	send_payment_confirmation_email(order)
+	messages.success(request, f'Payment successful! Order #{order.id} has been confirmed.')
 
 	return JsonResponse({'success': True, 'redirect_url': f'/orders/{order.id}/success/'})
 

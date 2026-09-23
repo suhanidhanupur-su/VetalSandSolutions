@@ -128,6 +128,14 @@ def system_status(request):
             'products_active': active_product_count,
             'categories_count': category_count,
         }
+        data['razorpay'] = {
+            'configured': getattr(settings, 'RAZORPAY_CONFIGURED', False),
+            'test_mode': getattr(settings, 'RAZORPAY_TEST_MODE', True),
+            'currency': getattr(settings, 'RAZORPAY_CURRENCY', 'INR'),
+            'key_id_set': bool(getattr(settings, 'RAZORPAY_KEY_ID', '')),
+            'key_prefix': settings.RAZORPAY_KEY_ID[:8] if getattr(settings, 'RAZORPAY_KEY_ID', '') else '',
+            'secret_set': bool(getattr(settings, 'RAZORPAY_KEY_SECRET', '')),
+        }
     except Exception as exc:
         data['status'] = 'error'
         data['error_type'] = exc.__class__.__name__

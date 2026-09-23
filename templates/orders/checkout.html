@@ -61,21 +61,189 @@
                             {% if form.payment_method.errors %}<div class="order-form-error">{{ form.payment_method.errors }}</div>{% endif %}
                         </fieldset>
 
+                        <div id="checkout-notification" class="alert d-none mt-3" role="alert"></div>
+
                         <button type="submit" class="btn btn-primary order-submit-btn" id="checkout-submit-button">Place Order</button>
                     </form>
-                                    <script>
-                                        const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
-                                        const checkoutSubmitButton = document.getElementById('checkout-submit-button');
-                                        paymentMethodInputs.forEach((input) => {
-                                            input.addEventListener('change', () => {
-                                                checkoutSubmitButton.textContent = input.value === 'online' ? 'Pay Online' : 'Place Order';
-                                            });
+
+                    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                    <script>
+                        (function() {
+                            const orderForm = document.querySelector('form.order-form');
+                            const paymentMethodInputs = document.querySelectorAll('input[name="payment_method"]');
+                            const checkoutSubmitButton = document.getElementById('checkout-submit-button');
+                            const notificationBox = document.getElementById('checkout-notification');
+
+                            function showNotification(msg, type) {
+                                if (!notificationBox) return;
+                                notificationBox.className = 'alert alert-' + (type || 'danger') + ' mt-3';
+                                notificationBox.textContent = msg;
+                                notificationBox.classList.remove('d-none');
+                                notificationBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+
+                            function hideNotification() {
+                                if (!notificationBox) return;
+                                notificationBox.classList.add('d-none');
+                                notificationBox.textContent = '';
+                            }
+
+                            function updateButtonLabel() {
+                                const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+                                if (selectedMethod && selectedMethod.value === 'online') {
+                                    checkoutSubmitButton.textContent = 'Pay Online';
+                                } else {
+                                    checkoutSubmitButton.textContent = 'Place Order';
+                                }
+                            }
+
+                            paymentMethodInputs.forEach((input) => {
+                                input.addEventListener('change', () => {
+                                    hideNotification();
+                                    updateButtonLabel();
+                                });
+                            });
+                            updateButtonLabel();
+
+                            if (orderForm) {
+                                orderForm.addEventListener('submit', async function (event) {
+                                    const selectedMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'cod';
+
+                                    // For COD: allow standard form submission
+                                    if (selectedMethod === 'cod') {
+                                        return true;
+                                    }
+
+                                    // For Online Payment: intercept and launch Razorpay checkout
+                                    event.preventDefault();
+                                    hideNotification();
+
+                                    // Clear existing inline errors
+                                    document.querySelectorAll('.order-form-error').forEach(el => el.remove());
+
+                                    // Validate Razorpay SDK loaded
+                                    if (typeof Razorpay === 'undefined') {
+                                        showNotification('Payment gateway is loading. Please check your internet connection or choose Cash on Delivery.', 'warning');
+                                        return;
+                                    }
+
+                                    const originalBtnText = checkoutSubmitButton.textContent;
+                                    checkoutSubmitButton.disabled = true;
+                                    checkoutSubmitButton.textContent = 'Initiating Secure Payment...';
+
+                                    const formData = new FormData(orderForm);
+
+                                    try {
+                                        const response = await fetch(orderForm.action || window.location.href, {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'Accept': 'application/json'
+                                            },
+                                            body: formData
                                         });
-                                        const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
-                                        if (selectedPaymentMethod) {
-                                            checkoutSubmitButton.textContent = selectedPaymentMethod.value === 'online' ? 'Pay Online' : 'Place Order';
+
+                                        const data = await response.json();
+
+                                        if (!data.success) {
+                                            checkoutSubmitButton.disabled = false;
+                                            checkoutSubmitButton.textContent = originalBtnText;
+
+                                            if (data.redirect_url) {
+                                                window.location.href = data.redirect_url;
+                                                return;
+                                            }
+
+                                            if (data.errors) {
+                                                let firstError = '';
+                                                for (const [field, errors] of Object.entries(data.errors)) {
+                                                    const errorMsg = Array.isArray(errors) ? errors[0] : errors;
+                                                    if (!firstError) firstError = errorMsg;
+                                                    const fieldInput = orderForm.querySelector(`[name="${field}"]`);
+                                                    if (fieldInput) {
+                                                        const errorDiv = document.createElement('div');
+                                                        errorDiv.className = 'order-form-error';
+                                                        errorDiv.textContent = errorMsg;
+                                                        fieldInput.parentElement.appendChild(errorDiv);
+                                                    }
+                                                }
+                                                showNotification(firstError || 'Please fill in all required delivery details.', 'danger');
+                                            } else if (data.message) {
+                                                showNotification(data.message, 'danger');
+                                            } else {
+                                                showNotification('Unable to initiate online payment. Please select Cash on Delivery or contact us.', 'danger');
+                                            }
+                                            return;
                                         }
-                                    </script>
+
+                                        // Launch Razorpay directly in active user click flow
+                                        const rzpOptions = {
+                                            key: data.key_id,
+                                            amount: data.amount,
+                                            currency: data.currency || 'INR',
+                                            name: 'Vetal Sand Solutions',
+                                            description: data.description || ('Order #' + data.order_id),
+                                            image: '/static/images/LOGOOO.png',
+                                            order_id: data.razorpay_order_id,
+                                            prefill: data.prefill || {},
+                                            theme: {
+                                                color: '#9B3D20'
+                                            },
+                                            handler: async function (paymentResponse) {
+                                                checkoutSubmitButton.textContent = 'Verifying Payment...';
+                                                try {
+                                                    const verifyResponse = await fetch(`/payments/orders/${data.order_id}/razorpay/verify/`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                                                            'Content-Type': 'application/x-www-form-urlencoded',
+                                                            'X-Requested-With': 'XMLHttpRequest'
+                                                        },
+                                                        body: new URLSearchParams(paymentResponse)
+                                                    });
+
+                                                    const verifyData = await verifyResponse.json();
+                                                    if (verifyData.success) {
+                                                        window.location.href = verifyData.redirect_url;
+                                                    } else {
+                                                        checkoutSubmitButton.disabled = false;
+                                                        checkoutSubmitButton.textContent = originalBtnText;
+                                                        showNotification(verifyData.message || 'Payment verification could not be completed. Please contact support.', 'danger');
+                                                    }
+                                                } catch (verifyErr) {
+                                                    checkoutSubmitButton.disabled = false;
+                                                    checkoutSubmitButton.textContent = originalBtnText;
+                                                    showNotification('Network error while verifying payment. Please do not pay again. Refreshing page...', 'danger');
+                                                }
+                                            },
+                                            modal: {
+                                                ondismiss: function () {
+                                                    checkoutSubmitButton.disabled = false;
+                                                    checkoutSubmitButton.textContent = originalBtnText;
+                                                    showNotification('Payment was cancelled. Your cart items are preserved. You can retry payment or select Cash on Delivery.', 'warning');
+                                                }
+                                            }
+                                        };
+
+                                        const rzp = new Razorpay(rzpOptions);
+                                        rzp.on('payment.failed', function (resp) {
+                                            checkoutSubmitButton.disabled = false;
+                                            checkoutSubmitButton.textContent = originalBtnText;
+                                            const errorDesc = resp.error ? resp.error.description : 'Payment failed';
+                                            showNotification('Payment failed: ' + errorDesc + '. Your cart items are preserved. You can retry or choose Cash on Delivery.', 'danger');
+                                        });
+
+                                        rzp.open();
+
+                                    } catch (err) {
+                                        checkoutSubmitButton.disabled = false;
+                                        checkoutSubmitButton.textContent = originalBtnText;
+                                        showNotification('Unable to start payment. Please check your connection or choose Cash on Delivery.', 'danger');
+                                    }
+                                });
+                            }
+                        })();
+                    </script>
                 </div>
             </div>
 

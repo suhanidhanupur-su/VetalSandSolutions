@@ -141,6 +141,11 @@ class PaymentModelTests(TestCase):
 		client = client_factory.return_value
 		self.client.force_login(self.order.user)
 
+		session = self.client.session
+		session['cart'] = {'1': 2}
+		session['pending_payment_order_id'] = self.order.id
+		session.save()
+
 		response = self.client.post(
 			f'/orders/{self.order.id}/razorpay/verify/',
 			{
@@ -158,6 +163,8 @@ class PaymentModelTests(TestCase):
 		self.assertEqual(payment.payment_id, 'pay_test_123')
 		self.assertEqual(payment.payment_status, Payment.Status.PAID)
 		self.assertEqual(self.order.status, Order.Status.CONFIRMED)
+		self.assertEqual(self.client.session.get('cart'), {})
+		self.assertNotIn('pending_payment_order_id', self.client.session)
 		from django.core import mail
 		self.assertEqual(len(mail.outbox), 1)
 		self.assertEqual(mail.outbox[0].to, ['payment@example.com'])

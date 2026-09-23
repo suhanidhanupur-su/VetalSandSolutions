@@ -284,10 +284,21 @@ except Exception:
     pass
 
 
-RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
-RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
+_razorpay_placeholders = {'', 'value', 'your-key-id', 'your-key-secret', 'rzp_test_xxx', 'rzp_live_xxx'}
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '').strip().strip('\'"')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '').strip().strip('\'"')
 RAZORPAY_CURRENCY = 'INR'
-RAZORPAY_TEST_MODE = True
+RAZORPAY_TEST_MODE = os.environ.get('RAZORPAY_TEST_MODE', 'True').lower() in {'1', 'true', 'yes', 'on'}
+RAZORPAY_CONFIGURED = (
+    bool(RAZORPAY_KEY_ID)
+    and bool(RAZORPAY_KEY_SECRET)
+    and RAZORPAY_KEY_ID.lower() not in _razorpay_placeholders
+    and RAZORPAY_KEY_SECRET.lower() not in _razorpay_placeholders
+    and (
+        (RAZORPAY_TEST_MODE and RAZORPAY_KEY_ID.startswith('rzp_test_'))
+        or (not RAZORPAY_TEST_MODE and (RAZORPAY_KEY_ID.startswith('rzp_live_') or RAZORPAY_KEY_ID.startswith('rzp_test_')))
+    )
+)
 
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT') or '587')

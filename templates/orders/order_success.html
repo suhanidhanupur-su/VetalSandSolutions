@@ -6,18 +6,25 @@
 <section class="orders-page">
     <div class="container orders-page-container">
         <div class="order-confirmation-panel">
-            <p class="section-kicker">Request received</p>
+            <p class="section-kicker">{% if order.payment.payment_status == 'Paid' %}Payment Confirmed{% else %}Order Status{% endif %}</p>
             <h2>Thank you, {{ order.full_name }}.</h2>
-            <p class="order-confirmation-lead">Your order request has been submitted. Our team will contact you with B2B pricing and next steps.</p>
+            {% if order.payment.payment_status == 'Paid' %}
+                <p class="order-confirmation-lead">Your payment has been verified and your order is confirmed. Our team will contact you regarding delivery and fulfillment.</p>
+            {% elif order.payment_method == 'cod' %}
+                <p class="order-confirmation-lead">Your order request has been submitted. Our team will contact you with B2B pricing and next steps.</p>
+            {% else %}
+                <p class="order-confirmation-lead">Your order has been recorded and is awaiting payment.</p>
+            {% endif %}
+
             {% if not pricing_available %}
                 <div class="pricing-request-box">
                     <strong>Online payment is currently unavailable for this order.</strong>
                     <p>Please contact us for pricing. Payment details will be added after commercial pricing is confirmed.</p>
                 </div>
-            {% elif not payment_ready and order.payment_method == 'online' %}
+            {% elif not payment_ready and order.payment_method == 'online' and order.payment.payment_status != 'Paid' %}
                 <div class="pricing-request-box">
-                    <strong>Online payment is currently unavailable.</strong>
-                    <p>Razorpay Test Mode credentials are not configured.</p>
+                    <strong>Online payment is currently pending or gateway is unavailable.</strong>
+                    <p>If you have already completed payment, please check your orders page or contact our team.</p>
                 </div>
             {% endif %}
 
@@ -43,73 +50,77 @@
             <div class="order-confirmation-actions">
                 <a href="{% url 'order_list' %}" class="btn btn-primary">View My Orders</a>
                 <a href="{% url 'product_list' %}" class="btn btn-secondary">Continue Shopping</a>
-                {% if payment_ready %}
-                    <button type="button" id="razorpay-pay-button" class="btn btn-primary">Pay with Razorpay</button>
+                {% if payment_ready and order.payment.payment_status != 'Paid' %}
+                    <button type="button" id="razorpay-pay-button" class="btn btn-primary">Complete Payment with Razorpay</button>
                 {% endif %}
             </div>
         </div>
     </div>
 </section>
-{% if payment_ready %}
+{% if payment_ready and order.payment.payment_status != 'Paid' %}
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         const payButton = document.getElementById('razorpay-pay-button');
-        payButton.addEventListener('click', async () => {
-            payButton.disabled = true;
-            const response = await fetch("{% url 'create_razorpay_order' order.id %}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            const data = await response.json();
-            if (!data.success) {
-                window.location.href = "{% url 'order_success' order.id %}";
-                return;
-            }
-
-            const razorpay = new Razorpay({
-                key: data.key_id,
-                order_id: data.razorpay_order_id,
-                currency: data.currency,
-                name: 'Vetal Sand Solutions',
-                description: 'Order #{{ order.id }}',
-                handler: async (paymentResponse) => {
-                    const verificationResponse = await fetch("{% url 'verify_payment' order.id %}", {
+        if (payButton) {
+            payButton.addEventListener('click', async () => {
+                payButton.disabled = true;
+                payButton.textContent = 'Connecting to Razorpay...';
+                try {
+                    const response = await fetch("{% url 'create_razorpay_order' order.id %}", {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': '{{ csrf_token }}',
-                            'Content-Type': 'application/x-www-form-urlencoded',
                             'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: new URLSearchParams(paymentResponse)
+                        }
                     });
-                    const verification = await verificationResponse.json();
-                    window.location.href = verification.success
-                        ? verification.redirect_url
-                        : "{% url 'order_success' order.id %}";
-                },
-                modal: {
-                    ondismiss: () => {
-                        const failureForm = document.createElement('form');
-                        failureForm.method = 'POST';
-                        failureForm.action = "{% url 'payment_failed' order.id %}";
-                        const csrfInput = document.createElement('input');
-                        csrfInput.type = 'hidden';
-                        csrfInput.name = 'csrfmiddlewaretoken';
-                        csrfInput.value = '{{ csrf_token }}';
-                        failureForm.appendChild(csrfInput);
-                        document.body.appendChild(failureForm);
-                        failureForm.submit();
+                    const data = await response.json();
+                    if (!data.success) {
+                        alert(data.message || 'Unable to open payment gateway. Please try again.');
+                        payButton.disabled = false;
+                        payButton.textContent = 'Complete Payment with Razorpay';
+                        return;
                     }
+
+                    const razorpay = new Razorpay({
+                        key: data.key_id,
+                        order_id: data.razorpay_order_id,
+                        currency: data.currency,
+                        amount: data.amount,
+                        name: 'Vetal Sand Solutions',
+                        description: 'Order #{{ order.id }}',
+                        image: '/static/images/LOGOOO.png',
+                        theme: { color: '#9B3D20' },
+                        handler: async (paymentResponse) => {
+                            payButton.textContent = 'Verifying Payment...';
+                            const verificationResponse = await fetch("{% url 'verify_payment' order.id %}", {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}',
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: new URLSearchParams(paymentResponse)
+                            });
+                            const verification = await verificationResponse.json();
+                            window.location.href = verification.success
+                                ? verification.redirect_url
+                                : "{% url 'order_success' order.id %}";
+                        },
+                        modal: {
+                            ondismiss: () => {
+                                payButton.disabled = false;
+                                payButton.textContent = 'Complete Payment with Razorpay';
+                            }
+                        }
+                    });
+                    razorpay.open();
+                } catch (err) {
+                    alert('Network error while opening payment. Please retry.');
+                    payButton.disabled = false;
+                    payButton.textContent = 'Complete Payment with Razorpay';
                 }
             });
-            razorpay.open();
-        });
-        {% if auto_start_payment %}
-            payButton.click();
-        {% endif %}
+        }
     </script>
 {% endif %}
 {% endblock %}
