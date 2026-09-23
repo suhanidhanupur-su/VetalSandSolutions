@@ -1,0 +1,291 @@
+[
+{
+  "model": "products.category",
+  "pk": 1,
+  "fields": {
+    "name": "Silica Sand",
+    "slug": "silica-sand",
+    "description": "Industrial silica sand",
+    "is_active": true,
+    "created_at": "2026-09-13T07:18:17.717Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 2,
+  "fields": {
+    "name": "Industrial Sand",
+    "slug": "industrial-sand",
+    "description": "Industrial sand solutions",
+    "is_active": true,
+    "created_at": "2026-09-13T07:18:17.735Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 3,
+  "fields": {
+    "name": "Foundry Sand",
+    "slug": "foundry-sand",
+    "description": "",
+    "is_active": true,
+    "created_at": "2026-09-20T17:35:08.231Z"
+  }
+},
+{
+  "model": "products.category",
+  "pk": 4,
+  "fields": {
+    "name": "Glass Grade Silica Sand",
+    "slug": "glass-grade-silica-sand",
+    "description": "...",
+    "is_active": true,
+    "created_at": "2026-09-20T17:46:03.204Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 1,
+  "fields": {
+    "category": 1,
+    "name": "Silica Sand Grade 16/30",
+    "slug": "silica-sand-grade-16-30",
+    "short_description": "Silica sand grade for industrial use",
+    "description": "Industrial sand for general use",
+    "grade": "16/30",
+    "price": "786.32",
+    "specifications": "",
+    "applications": "Foundry and industrial applications",
+    "industries": "Foundries & Castings",
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-09-13T07:18:17.745Z",
+    "updated_at": "2026-09-20T17:49:46.510Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 2,
+  "fields": {
+    "category": 2,
+    "name": "Silica Sand Grade 24/40",
+    "slug": "silica-sand-grade-24-40",
+    "short_description": "Versatile silica sand for broad industrial use",
+    "description": "Suitable for industrial processing requirements",
+    "grade": "24/40",
+    "price": "998.16",
+    "specifications": "",
+    "applications": "Glass and filtration",
+    "industries": "Glass Manufacturing",
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-09-13T07:18:17.756Z",
+    "updated_at": "2026-09-20T09:51:07.902Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 3,
+  "fields": {
+    "category": 1,
+    "name": "Silica Sand",
+    "slug": "silica-sand",
+    "short_description": "Quality silica sand for a range of industrial applications.",
+    "description": "Silica sand is a versatile industrial mineral used in various manufacturing and processing applications. Product selection depends on the required grade, particle size and application-specific requirements. Contact our team for product details and sourcing enquiries.",
+    "grade": "16/30",
+    "price": "999.00",
+    "specifications": "Enter verified specifications such as silica content, particle size, moisture content and other applicable parameters. Don't use guessed values.",
+    "applications": "Foundry, glass manufacturing, construction or water filtration — include only the applications confirmed for this product.",
+    "industries": "Foundries, glass manufacturing, construction and water treatment — select only the industries the company actually serves for this grade.",
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-09-20T17:26:34.239Z",
+    "updated_at": "2026-09-20T17:26:34.239Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 4,
+  "fields": {
+    "category": 3,
+    "name": "Foundry Sand",
+    "slug": "foundry-sand",
+    "short_description": "Foundry sand for metal casting and moulding applications.",
+    "description": "Foundry sand is used in metal casting processes to prepare moulds and cores. Its suitability depends on grain characteristics, thermal properties and the requirements of the casting process. Contact our team to enquire about available grades, product specifications and supply options.",
+    "grade": "24/40",
+    "price": "3999.03",
+    "specifications": "Material: Foundry Sand\r\nGrain Size: As per available grade\r\nGrain Shape: As per product specification\r\nRefractoriness: As per supplier data\r\nMoisture: As per laboratory report\r\nPackaging: As per availability",
+    "applications": "Metal casting, mould preparation and core-making — subject to the actual product grade.",
+    "industries": "Foundries, metal casting and manufacturing — where the product is suitable.",
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-09-20T17:43:02.496Z",
+    "updated_at": "2026-09-20T17:43:46.917Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 5,
+  "fields": {
+    "category": 4,
+    "name": "Glass Grade Silica Sand",
+    "slug": "glass-grade-silica-sand",
+    "short_description": "Silica sand for glass manufacturing applications, subject to grade requirements.",
+    "description": "Glass grade silica sand is a raw material used in glass manufacturing. The required quality depends on chemical composition, particle size and the type of glass being produced. Enquire with our team for available grades, verified specifications and product suitability.",
+    "grade": "16/30",
+    "price": "2998.94",
+    "specifications": "Material: Glass Grade Silica Sand\r\nSiO₂ Content: As per laboratory report\r\nIron Content: As per laboratory report\r\nParticle Size: As per available grade\r\nMoisture: As per specification\r\nPackaging: As per availability",
+    "applications": "Glass manufacturing, where the material meets the required composition and grain-size specifications.",
+    "industries": "Glass manufacturing and glass processing.",
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-09-20T17:47:50.374Z",
+    "updated_at": "2026-09-20T17:47:50.374Z"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 1,
+  "fields": {
+    "product": 2,
+    "image": "image/upload/v1789897873/gnektsdomfohujjavwm2.jpg",
+    "alt_text": "",
+    "is_primary": false,
+    "created_at": "2026-09-20T09:51:12.508Z"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 3,
+  "fields": {
+    "product": 3,
+    "image": "image/upload/v1789925195/hofsfhgniytapl6edeli.jpg",
+    "alt_text": "",
+    "is_primary": false,
+    "created_at": "2026-09-20T17:26:36.846Z"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 4,
+  "fields": {
+    "product": 4,
+    "image": "image/upload/v1789926182/euonxwdfvqat59df5wsx.jpg",
+    "alt_text": "",
+    "is_primary": false,
+    "created_at": "2026-09-20T17:43:03.246Z"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 5,
+  "fields": {
+    "product": 4,
+    "image": "image/upload/v1789926226/kzjxxnisqgxqkhj70zyu.jpg",
+    "alt_text": "",
+    "is_primary": false,
+    "created_at": "2026-09-20T17:43:47.797Z"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 6,
+  "fields": {
+    "product": 5,
+    "image": "image/upload/v1789926470/cuhbnzrkhhwnupghfqmx.jpg",
+    "alt_text": "",
+    "is_primary": false,
+    "created_at": "2026-09-20T17:47:51.420Z"
+  }
+},
+{
+  "model": "products.productimage",
+  "pk": 7,
+  "fields": {
+    "product": 1,
+    "image": "image/upload/v1789926586/oepxxyprcnefkytoug5q.jpg",
+    "alt_text": "",
+    "is_primary": false,
+    "created_at": "2026-09-20T17:49:47.333Z"
+  }
+},
+{
+  "model": "products.wishlist",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "product": 1,
+    "created_at": "2026-09-15T08:20:17.928Z"
+  }
+},
+{
+  "model": "core.galleryimage",
+  "pk": 1,
+  "fields": {
+    "title": "Silica Sand",
+    "description": "High-quality silica sand for industrial applications.",
+    "image": "image/upload/v1789915952/lurbycwnz9oc0mh7smpx.jpg",
+    "category": "Silica Sand",
+    "alt_text": "Silica sand samples displayed in different grades.",
+    "is_active": true,
+    "display_order": 0,
+    "created_at": "2026-09-20T14:52:32.733Z"
+  }
+},
+{
+  "model": "core.galleryimage",
+  "pk": 2,
+  "fields": {
+    "title": "Products & Grades",
+    "description": "Explore our range of silica sand products and grades.",
+    "image": "image/upload/v1789916080/j5hknjdr87v7lllfsmgm.jpg",
+    "category": "Products & Grades",
+    "alt_text": "Silica sand samples displayed in different grades.",
+    "is_active": true,
+    "display_order": 2,
+    "created_at": "2026-09-20T14:54:41.357Z"
+  }
+},
+{
+  "model": "core.galleryimage",
+  "pk": 3,
+  "fields": {
+    "title": "Industrial Applications",
+    "description": "Discover the use of silica sand across industrial processes.",
+    "image": "image/upload/v1789916177/qxjxatpv6gy5fjaz26fc.jpg",
+    "category": "Industrial Applications",
+    "alt_text": "Industrial foundry casting process using sand molds.",
+    "is_active": true,
+    "display_order": 3,
+    "created_at": "2026-09-20T14:56:18.421Z"
+  }
+},
+{
+  "model": "core.galleryimage",
+  "pk": 4,
+  "fields": {
+    "title": "Glass Manufacturing",
+    "description": "Silica sand and its role in glass manufacturing.",
+    "image": "image/upload/v1789916279/lrsrx20ssdomybx7iyk3.jpg",
+    "category": "Glass Manufacturing",
+    "alt_text": "Industrial glass manufacturing production line.",
+    "is_active": true,
+    "display_order": 4,
+    "created_at": "2026-09-20T14:58:00.416Z"
+  }
+},
+{
+  "model": "core.galleryimage",
+  "pk": 5,
+  "fields": {
+    "title": "Water Filtration",
+    "description": "Silica sand used as filter media in water treatment applications.",
+    "image": "image/upload/v1789916379/j1gowcrmlseymmz7xxsb.jpg",
+    "category": "Water Filtration",
+    "alt_text": "Silica sand filter media for water filtration.",
+    "is_active": true,
+    "display_order": 4,
+    "created_at": "2026-09-20T14:59:40.062Z"
+  }
+}
+]
