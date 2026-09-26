@@ -142,6 +142,7 @@ if DATABASE_URL:
             ssl_require=not DEBUG,
         )
     }
+    
 else:
     if IS_VERCEL:
         import shutil
