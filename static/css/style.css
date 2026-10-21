@@ -1386,22 +1386,6 @@ textarea {
     }
 }
 
-@media (max-width: 991.98px) {
-    .gallery-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 575.98px) {
-    .gallery-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .gallery-image-wrap {
-        min-height: 230px;
-    }
-}
-
 /* Auth System Styling — brand-consistent brown/cream/gold palette */
 .auth-section {
     padding: 4rem 0 5rem;
@@ -2224,7 +2208,8 @@ textarea {
 .gallery-category {
     display: inline-block;
     max-width: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+    word-break: normal;
     margin-bottom: 0.8rem;
     color: var(--primary);
     font-weight: 800;
@@ -2236,11 +2221,15 @@ textarea {
 .gallery-card-body h3 {
     font-size: 1.55rem;
     margin-bottom: 0.6rem;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .gallery-card-body p {
     color: rgba(33, 27, 24, 0.72);
     margin-bottom: 0;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .empty-state {
@@ -5187,6 +5176,21 @@ h1, h2, h3, h4, h5, h6, p, a, span {
     .filter-actions .btn {
         flex: 1 !important;
     }
+
+    /* Visual Collection / Gallery section tablet layout (2 columns) */
+    .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 1.5rem !important;
+    }
+
+    .gallery-image-wrap {
+        min-height: 250px !important;
+    }
+
+    .gallery-image {
+        height: 270px !important;
+        object-fit: cover !important;
+    }
 }
 
 /* ── Mobile Devices (< 768px) ── */
@@ -5200,6 +5204,54 @@ h1, h2, h3, h4, h5, h6, p, a, span {
     .filter-actions {
         grid-column: auto !important;
         width: 100% !important;
+    }
+
+    /* Visual Collection / Gallery section mobile layout (1 column) */
+    .gallery-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.75rem !important;
+    }
+
+    .gallery-card {
+        width: 100% !important;
+    }
+
+    .gallery-image-wrap {
+        min-height: 230px !important;
+        height: 250px !important;
+    }
+
+    .gallery-image {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    .gallery-card-body {
+        padding: 1.4rem 1.25rem 1.6rem !important;
+    }
+
+    .gallery-category {
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+        font-size: 0.74rem !important;
+        letter-spacing: 0.12em !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .gallery-card-body h3 {
+        font-size: 1.4rem !important;
+        line-height: 1.25 !important;
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+        margin-bottom: 0.55rem !important;
+    }
+
+    .gallery-card-body p {
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
     }
 
     .vs-hero,
@@ -5258,6 +5310,28 @@ h1, h2, h3, h4, h5, h6, p, a, span {
 
 /* ── Small Mobile Screens (< 576px) ── */
 @media (max-width: 575.98px) {
+    /* Visual Collection / Gallery section small mobile refinement */
+    .gallery-grid {
+        gap: 1.5rem !important;
+    }
+
+    .gallery-image-wrap {
+        min-height: 210px !important;
+        height: 220px !important;
+    }
+
+    .gallery-card-body {
+        padding: 1.2rem 1.1rem 1.4rem !important;
+    }
+
+    .gallery-card-body h3 {
+        font-size: 1.3rem !important;
+    }
+
+    .gallery-card-body p {
+        font-size: 0.92rem !important;
+    }
+
     .premium-navbar .brand-logo {
         height: 42px !important;
         max-width: 140px !important;
